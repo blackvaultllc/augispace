@@ -10,6 +10,9 @@ export const user = pgTable('user', {
   updatedAt: timestamp('updatedAt', { withTimezone: true }).notNull().defaultNow(),
   role: text('role').notNull().default('member'),
   tier: text('tier').notNull().default('observer'),
+  stripeCustomerId: text('stripeCustomerId').unique(),
+  stripeSubscriptionId: text('stripeSubscriptionId').unique(),
+  stripeSubscriptionStatus: text('stripeSubscriptionStatus'),
 })
 
 export const session = pgTable('session', {

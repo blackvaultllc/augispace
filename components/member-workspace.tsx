@@ -139,6 +139,13 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
     router.refresh()
   }
 
+  async function openBilling(path: '/api/billing/checkout' | '/api/billing/portal', plan?: 'analyst' | 'command') {
+    const response = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(plan ? { plan } : {}) })
+    const payload = await response.json() as { url?: string; error?: string }
+    if (!response.ok || !payload.url) { setError(payload.error || 'Billing could not be opened.'); return }
+    window.location.href = payload.url
+  }
+
   return (
     <main className="workspace-page">
       <div className="workspace-shell">
@@ -198,6 +205,8 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
             ) : (
               <div className="workspace-history-empty"><span><Clock3 aria-hidden="true" /></span><p>Your saved investigations will appear here after your first check.</p></div>
             )}
+            {tier === 'observer' && <div className="workspace-billing-actions"><button type="button" onClick={() => openBilling('/api/billing/checkout', 'analyst')}>Upgrade to Analyst <ArrowUpRight aria-hidden="true" /></button><button type="button" onClick={() => openBilling('/api/billing/checkout', 'command')}>Upgrade to Command <ArrowUpRight aria-hidden="true" /></button></div>}
+            {tier !== 'observer' && <button className="workspace-plan-link workspace-manage-billing" type="button" onClick={() => openBilling('/api/billing/portal')}>Manage subscription <ArrowRight aria-hidden="true" /></button>}
             <Link className="workspace-plan-link" href="/#plans">Explore plan access <ArrowRight aria-hidden="true" /></Link>
             <div className="workspace-plan-note"><Sparkles aria-hidden="true" /><p>{tier === 'observer' ? 'Analyst unlocks raw DNS evidence and 30 monthly checks. Command adds AUGI explanations and 150 checks.' : tier === 'analyst' ? 'Command adds evidence-led AI explanations and 150 monthly checks.' : 'AUGI explanations connect each recommendation back to public DNS evidence.'}</p></div>
             <div className="workspace-scope-note"><Check aria-hidden="true" /><p>Configuration signals are not identity verification or proof of compromise. Use findings for defensive action.</p></div>

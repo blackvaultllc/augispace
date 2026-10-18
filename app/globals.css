@@ -537,6 +537,12 @@ a { color: inherit; }
 .workspace-history-empty p { margin: 0; }
 .workspace-plan-link { display: flex; align-items: center; justify-content: space-between; margin-top: 17px; padding-top: 13px; border-top: 1px solid var(--line); color: #b7c3cb; font-size: 9px; text-decoration: none; }
 .workspace-plan-link:hover { color: var(--cyan); }
+.workspace-billing-actions { display: grid; gap: 7px; margin-top: 17px; }
+.workspace-billing-actions button { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 38px; padding: 0 10px; border: 1px solid rgba(140,232,220,.28); background: rgba(77,188,174,.08); color: var(--cyan); cursor: pointer; font-family: var(--mono); font-size: 7px; letter-spacing: .06em; text-align: left; }
+.workspace-billing-actions button:hover { background: rgba(77,188,174,.15); }
+.workspace-billing-actions svg { width: 12px; height: 12px; }
+.workspace-manage-billing { width: 100%; border: 1px solid var(--line); background: transparent; cursor: pointer; font-family: inherit; text-align: left; }
+.workspace-manage-billing:hover { border-color: var(--line-bright); }
 .workspace-plan-link svg { width: 13px; height: 13px; }
 .workspace-plan-note, .workspace-scope-note { display: flex; align-items: flex-start; gap: 8px; margin-top: 13px; padding: 10px; border: 1px solid rgba(154,139,250,.14); background: rgba(87,72,147,.06); }
 .workspace-plan-note > svg, .workspace-scope-note > svg { width: 12px; height: 12px; flex: none; margin-top: 1px; color: #b4a8ff; }
