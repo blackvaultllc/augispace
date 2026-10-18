@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
-import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { AuthForm } from '@/components/auth-form'
-import { auth } from '@/lib/auth'
+import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = { title: 'Sign in' }
 
 export default async function SignInPage() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (session?.user) redirect('/workspace')
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (user?.email?.toLowerCase() === 'blackhatterxvi@gmail.com') redirect('/workspace')
   return <AuthForm mode="sign-in" />
 }

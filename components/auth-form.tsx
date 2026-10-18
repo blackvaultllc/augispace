@@ -4,7 +4,7 @@ import { useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, ArrowRight, Fingerprint, LockKeyhole, LoaderCircle, Mail } from 'lucide-react'
-import { authClient } from '@/lib/auth-client'
+import { createClient } from '@/lib/supabase/client'
 
 export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
   const router = useRouter()
@@ -20,9 +20,17 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
     setError('')
     setBusy(true)
 
+    const supabase = createClient()
     const result = isSignUp
-      ? await authClient.signUp.email({ name: name.trim(), email: email.trim(), password })
-      : await authClient.signIn.email({ email: email.trim(), password })
+      ? await supabase.auth.signUp({
+          email: email.trim(),
+          password,
+          options: {
+            data: { name: name.trim() },
+            emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback`,
+          },
+        })
+      : await supabase.auth.signInWithPassword({ email: email.trim(), password })
 
     setBusy(false)
     if (result.error) {
@@ -30,15 +38,21 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
       return
     }
 
-    router.push('/workspace')
+    router.push(isSignUp ? '/sign-in?created=1' : '/workspace')
     router.refresh()
   }
 
   async function handleGoogleSignIn() {
     setError('')
     setBusy(true)
-    const result = await authClient.signIn.social({ provider: 'google', callbackURL: '/workspace' })
-    if (result.error) {
+    const supabase = createClient()
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=/workspace`,
+      },
+    })
+    if (error) {
       setBusy(false)
       setError('Google sign-in is temporarily unavailable. Please try again.')
     }
