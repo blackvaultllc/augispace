@@ -564,6 +564,23 @@ a { color: inherit; }
 .workspace-ai-title > svg { width: 15px; height: 15px; flex: none; color: #b7aaff; }
 .workspace-ai-title h3 { margin: 5px 0 0; color: #e5e0ff; font-size: 10px; font-weight: 500; }
 .workspace-ai-card > p { margin: 10px 0 0; color: #b8bdcc; font-size: 9px; line-height: 1.75; white-space: pre-wrap; }
+.workspace-location { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); }
+.location-map-wrap { overflow: hidden; margin-top: 18px; border: 1px solid var(--line); background: #081218; }
+.location-map-wrap svg { display: block; width: 100%; height: auto; }
+.location-list { display: grid; gap: 8px; margin-top: 12px; }
+.location-list div { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid rgba(140,232,220,.1); font-family: var(--mono); font-size: 8px; }
+.location-list strong { color: var(--cyan); font-weight: 400; }
+.location-list span { color: #8798a4; text-align: right; }
+.legal-page { min-height: 100vh; background: var(--bg); color: #dce6ea; }
+.legal-shell { width: min(100% - 48px, 1080px); margin: 0 auto; }
+.legal-header { display: flex; align-items: center; justify-content: space-between; min-height: 86px; border-bottom: 1px solid var(--line); }
+.legal-back { color: #8fa2ae; font-family: var(--mono); font-size: 8px; letter-spacing: .1em; text-decoration: none; }
+.legal-content { max-width: 760px; padding: 92px 0 110px; }
+.legal-content h1 { margin: 20px 0 30px; color: #eef3f6; font-size: clamp(42px, 7vw, 76px); font-weight: 500; letter-spacing: -.07em; line-height: .98; }
+.legal-content h2 { margin: 42px 0 12px; color: var(--cyan); font-size: 18px; font-weight: 500; }
+.legal-content p, .legal-content li { color: #9aaab4; font-size: 14px; line-height: 1.85; }
+.legal-content ul { padding-left: 22px; }
+.legal-content li { margin: 8px 0; }
 .workspace-disclaimer { margin: 0; padding: 0 14px 12px; color: #7f8b95; font-size: 7px; line-height: 1.55; }
 .history-count { color: var(--cyan); font-family: var(--mono); font-size: 9px; }
 .workspace-history-list { display: grid; gap: 7px; max-height: 385px; overflow-y: auto; margin-top: 18px; }

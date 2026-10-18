@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Activity, ArrowDownRight, ArrowRight, ArrowUpRight, Check, CircleAlert, Clock3, Command, Fingerprint, LoaderCircle, LockKeyhole, LogOut, Mail, Radar, ShieldCheck, Sparkles } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
+import { IpLocationMap } from '@/components/ip-location-map'
 
 type DomainCheck = {
   label: string
@@ -20,6 +21,7 @@ export type InvestigationReport = {
   checks: DomainCheck[]
   evidence: { mx: string[]; spf: string | null; dmarc: string | null } | null
   aiExplanation: string | null
+  locations?: { ip: string; city: string | null; region: string | null; country: string | null; latitude: number; longitude: number; source: string }[]
 }
 
 export type SavedInvestigation = {
@@ -74,6 +76,7 @@ function ReportDetails({ report }: { report: InvestigationReport }) {
           </dl>
         </details>
       )}
+      {report.locations && <IpLocationMap locations={report.locations} />}
       {report.aiExplanation && (
         <section className="workspace-ai-card" aria-labelledby="ai-explanation-title">
           <div className="workspace-ai-title"><Sparkles aria-hidden="true" /><div><span className="workspace-micro-label">AUGI / EVIDENCE-LED ANALYSIS</span><h3 id="ai-explanation-title">What these signals mean</h3></div></div>

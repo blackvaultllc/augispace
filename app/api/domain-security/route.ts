@@ -23,6 +23,22 @@ type DnsResponse = {
   Status?: number
 }
 
+type PublicLocation = { ip: string; city: string | null; region: string | null; country: string | null; latitude: number; longitude: number; source: string }
+
+async function resolvePublicLocations(mxRecords: string[]) {
+  const hosts = mxRecords.map((record) => record.replace(/^\d+\s+/, '').replace(/\.$/, '')).slice(0, 4)
+  const answers = await Promise.allSettled(hosts.map((host) => queryDns(host, 'A')))
+  const ips = [...new Set(answers.flatMap((answer) => answer.status === 'fulfilled' ? answersFor(answer.value, 1) : []))].filter((ip) => /^\d{1,3}(?:\.\d{1,3}){3}$/.test(ip)).slice(0, 4)
+  const locations = await Promise.allSettled(ips.map(async (ip) => {
+    const response = await fetch(`https://ipwho.is/${ip}`, { signal: AbortSignal.timeout(DNS_TIMEOUT_MS), next: { revalidate: 3600 } })
+    if (!response.ok) throw new Error('IP location unavailable')
+    const data = await response.json() as { success?: boolean; city?: string; region?: string; country?: string; latitude?: number; longitude?: number }
+    if (!data.success || typeof data.latitude !== 'number' || typeof data.longitude !== 'number') throw new Error('IP location unavailable')
+    return { ip, city: data.city ?? null, region: data.region ?? null, country: data.country ?? null, latitude: data.latitude, longitude: data.longitude, source: 'ipwho.is' }
+  }))
+  return locations.flatMap((location) => location.status === 'fulfilled' ? [location.value] : [])
+}
+
 type Check = {
   label: string
   status: 'present' | 'missing' | 'monitoring' | 'unavailable'
@@ -42,7 +58,7 @@ function normalizeDomain(value: unknown) {
   return ascii
 }
 
-async function queryDns(name: string, type: 'MX' | 'TXT') {
+async function queryDns(name: string, type: 'A' | 'MX' | 'TXT') {
   const url = new URL('https://dns.google/resolve')
   url.searchParams.set('name', name)
   url.searchParams.set('type', type)
@@ -183,7 +199,8 @@ export async function POST(request: Request) {
     }
   }
 
-  const report = { domain, score, summary, checkedAt, checks, evidence, aiExplanation }
+  const locations = mxAnswers.length ? await resolvePublicLocations(mxAnswers) : []
+  const report = { domain, score, summary, checkedAt, checks, evidence, aiExplanation, locations }
   let savedInvestigation: { id: string; domain: string; score: number; createdAt: string; report: typeof report } | null = null
 
   if (userId) {

@@ -239,7 +239,7 @@ export function SiteFooter() {
   return (
     <footer className="site-footer section-wrap">
       <div className="footer-main"><BrandMark /><p>Intelligence in service of people.<br />Built by Serpent Intelligence Systems.</p></div>
-      <div className="footer-links"><Link href="/approach">Our approach</Link><Link href="/demo">Try the demo</Link><Link href="/plans">Plans</Link></div>
+      <div className="footer-links"><Link href="/approach">Our approach</Link><Link href="/demo">Try the demo</Link><Link href="/plans">Plans</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/acceptable-use">Acceptable use</Link></div>
       <div className="footer-bottom"><span>© 2026 SERPENT INTELLIGENCE SYSTEMS</span><span><span className="pulse-dot" /> PUBLIC SIGNALS · DEFENSIVE USE</span><a href="#top">BACK TO TOP <ArrowUpRight aria-hidden="true" /></a></div>
     </footer>
   )
