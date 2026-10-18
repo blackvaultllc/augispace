@@ -176,9 +176,9 @@ export function ThreatTerminal() {
     <main className="terminal-shell">
       <div className="terminal-frame">
         <header className="terminal-header">
-          <a href="#overview" className="wordmark" aria-label="Aegis Intelligence home">
+          <a href="#overview" className="wordmark" aria-label="Agamoss Intelligence home">
             <span className="wordmark-symbol"><Crosshair aria-hidden="true" /></span>
-            <span>AEGIS<span className="wordmark-light"> / INTEL</span></span>
+            <span>AGAMOSS<span className="wordmark-light"> / INTEL</span></span>
           </a>
           <div className="header-center"><span className="status-pulse" /> PRIVATE THREAT EXCHANGE <span className="header-divider">/</span> NODE 07</div>
           <div className="header-right"><span>OPERATOR</span><span className="operator-id">FIELD-01</span><span className="operator-mark">01</span></div>
@@ -190,7 +190,7 @@ export function ThreatTerminal() {
             <h1 id="page-title">IP <span>INTELLIGENCE</span></h1>
             <p className="intro-copy">Resolve an address. Read the signals. Submit field intelligence.</p>
           </div>
-          <div className="intro-index" aria-hidden="true"><span>AEGIS / IR</span><span>THREAT RESOLUTION CONSOLE</span><span>51°30&apos;26.4&quot;N　00°07&apos;39.0&quot;W</span></div>
+          <div className="intro-index" aria-hidden="true"><span>AGAMOSS / IR</span><span>THREAT RESOLUTION CONSOLE</span><span>51°30&apos;26.4&quot;N　00°07&apos;39.0&quot;W</span></div>
         </section>
 
         <form className="resolver" onSubmit={resolveTarget}>
@@ -267,7 +267,7 @@ export function ThreatTerminal() {
           </div>
         </section>
 
-        <footer className="terminal-footer"><span>AEGIS INTELLIGENCE SYSTEMS <b>© 2026</b></span><span>ALL DATA SHOWN IS SIMULATED FOR DEMONSTRATION</span><span><span className="status-pulse" /> SYSTEM NOMINAL <span className="footer-build">BUILD 7.04.1</span></span></footer>
+        <footer className="terminal-footer"><span>AGAMOSS INTELLIGENCE SYSTEMS <b>© 2026</b></span><span>ALL DATA SHOWN IS SIMULATED FOR DEMONSTRATION</span><span><span className="status-pulse" /> SYSTEM NOMINAL <span className="footer-build">BUILD 7.04.1</span></span></footer>
       </div>
     </main>
   )

@@ -4,11 +4,11 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: {
-    default: 'AEGIS / INTEL — IP Intelligence Terminal',
-    template: '%s | AEGIS / INTEL',
+    default: 'AGAMOSS / INTEL — IP Intelligence Terminal',
+    template: '%s | AGAMOSS / INTEL',
   },
   description: 'A passive, defensive IP intelligence console for reviewing public threat signals and contributing field observations.',
-  applicationName: 'AEGIS / INTEL',
+  applicationName: 'AGAMOSS / INTEL',
   keywords: [
     'email domain security',
     'email security posture',
