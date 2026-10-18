@@ -3,41 +3,50 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Aegis / Intel — IP Intelligence Terminal',
-  description: 'A sovereign threat intelligence terminal for IP reputation, passive OSINT telemetry, and field reporting.',
+  title: {
+    default: 'AUGI — Email Security Intelligence',
+    template: '%s | AUGI',
+  },
+  description: 'Understand the public security signals behind an email domain. AUGI turns DNS evidence into clear, privacy-first guidance for a safer inbox.',
+  applicationName: 'AUGI',
+  keywords: [
+    'email domain security',
+    'email security posture',
+    'SPF DMARC lookup',
+    'email authentication analysis',
+    'domain security intelligence',
+    'AUGI',
+    'Serpent Intelligence Systems',
+  ],
+  openGraph: {
+    title: 'AUGI — Email Security Intelligence',
+    description: 'Understand public email-domain security signals with privacy-first, evidence-led guidance.',
+    type: 'website',
+    siteName: 'AUGI',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AUGI — Email Security Intelligence',
+    description: 'Understand public email-domain security signals with privacy-first, evidence-led guidance.',
+  },
+  robots: { index: true, follow: true },
   generator: 'v0.app',
   icons: {
     icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
+      { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
+      { url: '/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
     ],
     apple: '/apple-icon.png',
   },
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'light dark',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' },
-  ],
+  colorScheme: 'dark',
+  themeColor: '#080b10',
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body className="antialiased">
