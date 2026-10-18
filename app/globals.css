@@ -430,6 +430,29 @@ a { color: inherit; }
 .truth-image figcaption { position: absolute; z-index: 1; right: 18px; bottom: 17px; left: 18px; display: grid; gap: 8px; }
 .truth-image figcaption span { color: var(--cyan); font-family: var(--mono); font-size: 8px; letter-spacing: .12em; }
 .truth-image figcaption strong { max-width: 260px; color: #edf3f5; font-size: 13px; font-weight: 500; line-height: 1.35; }
+.signal-lab { padding: 98px 0 112px; border-top: 1px solid var(--line); }
+.signal-lab-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; margin-bottom: 34px; }
+.signal-lab-heading h2 { margin: 19px 0 0; color: #eef3f6; font-size: clamp(38px, 5vw, 60px); font-weight: 500; letter-spacing: -.07em; line-height: .98; }
+.signal-lab-heading h2 span { color: var(--cyan); }
+.signal-lab-heading > p { max-width: 420px; margin: 0 0 3px; color: #96a5b0; font-size: 12px; line-height: 1.8; }
+.signal-lab-grid { display: grid; grid-template-columns: 1.35fr .85fr; gap: 12px; }
+.posture-chart, .signal-definitions { border: 1px solid var(--line); background: linear-gradient(145deg, rgba(15,25,32,.96), rgba(7,12,17,.9)); }
+.posture-chart { padding: 22px; }
+.chart-toolbar, .chart-footer { display: flex; align-items: center; gap: 14px; color: #81929d; font: 8px var(--mono); letter-spacing: .1em; }
+.chart-toolbar span { display: inline-flex; align-items: center; gap: 7px; color: #d8e4e8; }
+.chart-toolbar svg { width: 13px; height: 13px; color: var(--cyan); }
+.chart-toolbar strong { margin-left: auto; color: var(--cyan); font: 500 18px var(--mono); letter-spacing: -.08em; }
+.chart-toolbar small { color: #738690; font-size: 7px; }
+.chart-plot { position: relative; height: 260px; margin-top: 28px; padding-left: 30px; background: repeating-linear-gradient(to bottom, transparent 0, transparent 64px, rgba(140,232,220,.1) 65px), repeating-linear-gradient(to right, transparent 0, transparent 93px, rgba(140,232,220,.055) 94px); }
+.chart-axis-label { position: absolute; left: 0; color: #687b86; font: 7px var(--mono); }
+.chart-axis-top { top: 0; } .chart-axis-mid { top: 50%; transform: translateY(-50%); } .chart-axis-bottom { bottom: 0; }
+.chart-plot svg { width: 100%; height: 100%; overflow: visible; }
+.chart-area { fill: url(#signalFill); } .chart-line { fill: none; stroke: var(--cyan); stroke-width: 3; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 5px rgba(140,232,220,.4)); } .chart-point { fill: var(--cyan); stroke: #051016; stroke-width: 3; }
+.chart-footer { justify-content: space-between; margin: 12px 0 0 30px; font-size: 7px; }
+.signal-definitions { padding: 22px; }
+.definition-head { display: flex; align-items: center; gap: 8px; padding-bottom: 18px; border-bottom: 1px solid var(--line); color: var(--cyan); font: 8px var(--mono); letter-spacing: .12em; }
+.definition-head svg { width: 15px; height: 15px; }
+.signal-definitions dl { margin: 0; } .signal-definitions dl > div { padding: 15px 0; border-bottom: 1px solid rgba(140,232,220,.1); } .signal-definitions dt { color: #e4edf0; font-size: 12px; } .signal-definitions dd { margin: 5px 0 0; color: #8c9da8; font-size: 10px; line-height: 1.6; }
 .inner-hero { display: flex; min-height: 420px; align-items: flex-end; justify-content: space-between; gap: 40px; padding-top: 108px; padding-bottom: 86px; }
 .inner-hero-copy { max-width: 760px; }
 .inner-hero h1 { margin: 22px 0 17px; color: #eef3f6; font-size: clamp(42px, 7vw, 84px); font-weight: 500; letter-spacing: -.075em; line-height: .98; }
@@ -648,6 +671,8 @@ a { color: inherit; }
   .landing-path-card { min-height: 170px; }
   .landing-path-card strong { margin-top: 27px; }
   .truth-gallery-heading { align-items: flex-start; flex-direction: column; }
+  .signal-lab-heading { align-items: flex-start; flex-direction: column; }
+  .signal-lab-grid { grid-template-columns: 1fr; }
   .truth-gallery-grid { grid-template-columns: 1fr 1fr; }
   .truth-image-wide { grid-column: 1 / -1; }
   .truth-image { min-height: 240px; }
@@ -667,6 +692,12 @@ a { color: inherit; }
   .landing-path-card { min-height: 155px; padding: 17px; }
   .landing-path-card strong { margin-top: 23px; font-size: 15px; }
   .truth-gallery { padding: 70px 0 78px; }
+  .signal-lab { padding: 70px 0 78px; }
+  .posture-chart, .signal-definitions { padding: 17px; }
+  .chart-toolbar { flex-wrap: wrap; }
+  .chart-toolbar strong { margin-left: 0; }
+  .chart-toolbar small { width: 100%; }
+  .chart-plot { height: 210px; }
   .truth-gallery-grid { grid-template-columns: 1fr; }
   .truth-image-wide { grid-column: auto; }
   .truth-image { min-height: 260px; }
