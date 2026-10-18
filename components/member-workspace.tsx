@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Activity, ArrowDownRight, ArrowRight, ArrowUpRight, Check, CircleAlert, Clock3, Command, Fingerprint, LoaderCircle, LockKeyhole, LogOut, Mail, Radar, ShieldCheck, Sparkles } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import { IpLocationMap } from '@/components/ip-location-map'
+import { SecurityCopilot } from '@/components/security-copilot'
 
 type DomainCheck = {
   label: string
@@ -174,6 +175,8 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
           <article className="workspace-metric"><span className="workspace-metric-icon"><Activity aria-hidden="true" /></span><div><span>THIS MONTH</span><strong>{limit === null ? `${usedCount} / ∞` : `${usedCount} / ${limit}`}</strong><small>{remaining === null ? 'Unlimited owner investigations' : `${remaining} checks remaining this month`}</small></div></article>
           <article className="workspace-metric"><span className="workspace-metric-icon"><LockKeyhole aria-hidden="true" /></span><div><span>ACCOUNT</span><strong>{owner ? 'Owner' : 'Protected'}</strong><small>Private, account-scoped reports</small></div></article>
         </div>
+
+        <SecurityCopilot />
 
         <div className="workspace-content-grid">
           <section className="workspace-console" aria-labelledby="investigation-title">

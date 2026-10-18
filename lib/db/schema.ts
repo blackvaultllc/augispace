@@ -51,6 +51,14 @@ export const verification = pgTable('verification', {
   updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow(),
 })
 
+export const assistantMessages = pgTable('augi_assistant_message', {
+  id: text('id').primaryKey(),
+  userId: text('userId').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  role: text('role').notNull(),
+  content: text('content').notNull(),
+  createdAt: timestamp('createdAt', { withTimezone: true }).notNull().defaultNow(),
+})
+
 export const investigations = pgTable('augi_investigation', {
   id: text('id').primaryKey(),
   userId: text('userId').notNull(),
