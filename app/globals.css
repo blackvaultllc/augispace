@@ -773,7 +773,7 @@ a { color: inherit; }
   .workspace-footer { align-items: flex-start; flex-direction: column; justify-content: center; gap: 9px; padding-block: 14px; font-size: 6px; }
 }
 
-/* AEGIS / INTEL passive defensive terminal */
+/* AGAMOSS / INTEL passive defensive terminal */
 .terminal-shell { min-height: 100vh; padding: 24px; background: #070b0f; color: #dce7e9; font-family: var(--mono); }
 .terminal-frame { width: min(100%, 1440px); margin: 0 auto; border: 1px solid rgba(140,232,220,.2); background: linear-gradient(145deg,#0a1117,#070b0f); box-shadow: 0 24px 90px rgba(0,0,0,.35); }
 .terminal-header,.terminal-footer,.resolver-meta,.panel-heading,.severity-strip,.telemetry-target,.telemetry-foot,.feed-heading,.feed-footer { display:flex; align-items:center; justify-content:space-between; gap:16px; }
