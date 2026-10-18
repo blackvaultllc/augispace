@@ -24,6 +24,7 @@ import {
   Waypoints,
 } from 'lucide-react'
 import { useState } from 'react'
+import { PublicThreatBulletin } from '@/components/public-threat-bulletin'
 
 const capabilities = [
   {
@@ -254,6 +255,7 @@ export function AugiLanding() {
         <SiteHeader />
         <Hero />
         <div className="hero-divider" />
+        <PublicThreatBulletin />
         <section className="landing-paths section-wrap" aria-labelledby="landing-paths-title">
           <div className="section-label"><span>EXPLORE AUGI</span><span className="section-label-line" /><span>CHOOSE YOUR NEXT STEP</span></div>
           <h2 id="landing-paths-title">A focused starting point<br /><span>for safer decisions.</span></h2>
