@@ -1,5 +1,5 @@
-import { AugiLanding } from '@/components/augi-landing'
+import { ThreatTerminal } from '@/components/threat-terminal'
 
 export default function Page() {
-  return <AugiLanding />
+  return <ThreatTerminal />
 }
