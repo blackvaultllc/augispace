@@ -4,11 +4,11 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: {
-    default: 'AUGI — Email Security Intelligence',
-    template: '%s | AUGI',
+    default: 'AEGIS / INTEL — IP Intelligence Terminal',
+    template: '%s | AEGIS / INTEL',
   },
-  description: 'Understand the public security signals behind an email domain. AUGI turns DNS evidence into clear, privacy-first guidance for a safer inbox.',
-  applicationName: 'AUGI',
+  description: 'A passive, defensive IP intelligence console for reviewing public threat signals and contributing field observations.',
+  applicationName: 'AEGIS / INTEL',
   keywords: [
     'email domain security',
     'email security posture',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: 'dark',
-  themeColor: '#080b10',
+  themeColor: '#070b0f',
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
