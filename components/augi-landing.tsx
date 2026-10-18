@@ -7,7 +7,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   BadgeCheck,
-  Blocks,
   BrainCircuit,
   Check,
   ChevronRight,
@@ -23,7 +22,6 @@ import {
   Waypoints,
 } from 'lucide-react'
 import { useState } from 'react'
-import { DomainDemo } from '@/components/domain-demo'
 
 const capabilities = [
   {
@@ -78,14 +76,14 @@ const plans = [
 
 function BrandMark() {
   return (
-    <Link className="augi-brand" href="#top" aria-label="AUGI home">
+    <Link className="augi-brand" href="/" aria-label="AUGI home">
       <span className="augi-brand-mark" aria-hidden="true"><span /></span>
       <span className="augi-brand-name">AUGI<span> / SERPENT INTELLIGENCE</span></span>
     </Link>
   )
 }
 
-function SiteHeader() {
+export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
@@ -95,9 +93,9 @@ function SiteHeader() {
         <Menu aria-hidden="true" />
       </button>
       <nav className={menuOpen ? 'site-nav site-nav-open' : 'site-nav'} aria-label="Main navigation">
-        <a href="#approach" onClick={() => setMenuOpen(false)}>Our approach</a>
-        <a href="#demo" onClick={() => setMenuOpen(false)}>Live demo</a>
-        <a href="#plans" onClick={() => setMenuOpen(false)}>Plans</a>
+        <Link href="/approach" onClick={() => setMenuOpen(false)}>Our approach</Link>
+        <Link href="/demo" onClick={() => setMenuOpen(false)}>Live demo</Link>
+        <Link href="/plans" onClick={() => setMenuOpen(false)}>Plans</Link>
         <Link className="nav-signin" href="/sign-in" onClick={() => setMenuOpen(false)}>Sign in</Link>
         <Link className="nav-login" href="/sign-up" onClick={() => setMenuOpen(false)}>Create account <ArrowUpRight aria-hidden="true" /></Link>
       </nav>
@@ -117,6 +115,7 @@ function Hero() {
           <a className="button-secondary" href="#approach">Explore AUGI <ArrowDownRight aria-hidden="true" /></a>
         </div>
         <div className="hero-proof"><span className="proof-icon"><LockKeyhole aria-hidden="true" /></span><span>Your email stays yours. The demo checks the domain only.</span></div>
+        <div className="hero-secondary-links"><Link href="/approach">Explore how AUGI works <ArrowUpRight aria-hidden="true" /></Link><Link href="/plans">View plans <ArrowUpRight aria-hidden="true" /></Link></div>
       </div>
 
       <div className="hero-visual" role="group" aria-label="Abstract visualization of connected email-security signals">
@@ -134,7 +133,7 @@ function Hero() {
   )
 }
 
-function Approach() {
+export function Approach() {
   return (
     <section className="approach-section section-wrap" id="approach" aria-labelledby="approach-title">
       <div className="section-intro">
@@ -158,7 +157,7 @@ function Approach() {
   )
 }
 
-function IntelligenceBand() {
+export function IntelligenceBand() {
   return (
     <section className="intelligence-band" aria-labelledby="band-title">
       <div className="band-glow" aria-hidden="true" />
@@ -181,7 +180,7 @@ function IntelligenceBand() {
   )
 }
 
-function TrustSection() {
+export function TrustSection() {
   const principles = [
     { icon: Fingerprint, title: 'Privacy-first by default', body: 'The sample check strips the mailbox name in your browser. Only the domain is sent for public DNS checks.' },
     { icon: BadgeCheck, title: 'Evidence over assumptions', body: 'A DNS posture signal is not proof of identity, intent, or compromise. AUGI keeps those distinctions clear.' },
@@ -209,7 +208,7 @@ function TrustSection() {
   )
 }
 
-function Plans() {
+export function Plans() {
   return (
     <section className="plans-section section-wrap" id="plans" aria-labelledby="plans-title">
       <div className="plans-heading">
@@ -236,11 +235,11 @@ function Plans() {
   )
 }
 
-function SiteFooter() {
+export function SiteFooter() {
   return (
     <footer className="site-footer section-wrap">
       <div className="footer-main"><BrandMark /><p>Intelligence in service of people.<br />Built by Serpent Intelligence Systems.</p></div>
-      <div className="footer-links"><a href="#approach">Our approach</a><a href="#demo">Try the demo</a><a href="#plans">Plans</a></div>
+      <div className="footer-links"><Link href="/approach">Our approach</Link><Link href="/demo">Try the demo</Link><Link href="/plans">Plans</Link></div>
       <div className="footer-bottom"><span>© 2026 SERPENT INTELLIGENCE SYSTEMS</span><span><span className="pulse-dot" /> PUBLIC SIGNALS · DEFENSIVE USE</span><a href="#top">BACK TO TOP <ArrowUpRight aria-hidden="true" /></a></div>
     </footer>
   )
@@ -253,23 +252,14 @@ export function AugiLanding() {
         <SiteHeader />
         <Hero />
         <div className="hero-divider" />
-        <section className="demo-section section-wrap" id="demo" aria-labelledby="demo-title">
-          <div className="demo-intro">
-            <div className="section-label"><span>TRY AUGI / LIVE DOMAIN CHECK</span><span className="section-label-line" /><span>NO ACCOUNT REQUIRED</span></div>
-            <h2 id="demo-title">One address.<br /><span>A clearer picture.</span></h2>
-            <p>Enter an email address to check its domain&apos;s public mail-security configuration. The mailbox name stays in your browser; only the domain is checked.</p>
-            <div className="demo-privacy"><LockKeyhole aria-hidden="true" /><span>No inbox access. No passwords. No personal-data lookup.</span></div>
+        <section className="landing-paths section-wrap" aria-labelledby="landing-paths-title">
+          <div className="section-label"><span>EXPLORE AUGI</span><span className="section-label-line" /><span>CHOOSE YOUR NEXT STEP</span></div>
+          <h2 id="landing-paths-title">A focused starting point<br /><span>for safer decisions.</span></h2>
+          <div className="landing-path-grid">
+            <Link href="/demo" className="landing-path-card"><span>01 / CHECK</span><strong>Read a domain’s public signal</strong><p>Run a privacy-first DNS check without opening an account.</p><ArrowUpRight aria-hidden="true" /></Link>
+            <Link href="/approach" className="landing-path-card"><span>02 / METHOD</span><strong>Understand the AUGI approach</strong><p>See how evidence, context, and defensive action fit together.</p><ArrowUpRight aria-hidden="true" /></Link>
+            <Link href="/plans" className="landing-path-card"><span>03 / ACCESS</span><strong>Find your level of depth</strong><p>Explore plan access for independent investigators and teams.</p><ArrowUpRight aria-hidden="true" /></Link>
           </div>
-          <DomainDemo />
-        </section>
-        <Approach />
-        <IntelligenceBand />
-        <TrustSection />
-        <Plans />
-        <section className="closing-cta section-wrap" aria-labelledby="closing-title">
-          <div className="closing-icon"><Blocks aria-hidden="true" /></div>
-          <div><span className="section-label">INTELLIGENCE FOR A SAFER DIGITAL WORLD</span><h2 id="closing-title">Make the next signal<br />a smarter one.</h2></div>
-          <a className="button-primary" href="#demo">Try the free check <ArrowRight aria-hidden="true" /></a>
         </section>
         <SiteFooter />
       </div>
