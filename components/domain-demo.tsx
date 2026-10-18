@@ -1,6 +1,7 @@
 'use client'
 
 import { type FormEvent, useState } from 'react'
+import Link from 'next/link'
 import { ArrowUpRight, Check, CircleAlert, LoaderCircle, LockKeyhole, Mail, ShieldAlert, ShieldCheck } from 'lucide-react'
 
 type DomainCheck = {
@@ -15,7 +16,8 @@ type DomainResult = {
   summary: string
   checkedAt: string
   checks: DomainCheck[]
-  evidence: { mx: string[]; spf: string | null; dmarc: string | null }
+  evidence: { mx: string[]; spf: string | null; dmarc: string | null } | null
+  saved?: boolean
   error?: string
 }
 
@@ -86,14 +88,17 @@ export function DomainDemo() {
           <div className="result-checks">
             {result.checks.map((check) => <div className="result-check" key={check.label}><span className={`check-status status-${check.status}`}>{check.status === 'present' ? <Check aria-hidden="true" /> : <CircleAlert aria-hidden="true" />}{statusLabels[check.status]}</span><div><strong>{check.label}</strong><p>{check.detail}</p></div></div>)}
           </div>
-          <details className="result-evidence">
-            <summary>View DNS evidence <ArrowUpRight aria-hidden="true" /></summary>
-            <dl>
-              <div><dt>MX</dt><dd>{result.evidence.mx.length ? result.evidence.mx.join(' · ') : 'No MX answer returned'}</dd></div>
-              <div><dt>SPF</dt><dd>{result.evidence.spf ?? 'No SPF record found'}</dd></div>
-              <div><dt>DMARC</dt><dd>{result.evidence.dmarc ?? 'No DMARC record found'}</dd></div>
-            </dl>
-          </details>
+          {result.evidence && (
+            <details className="result-evidence">
+              <summary>View DNS evidence <ArrowUpRight aria-hidden="true" /></summary>
+              <dl>
+                <div><dt>MX</dt><dd>{result.evidence.mx.length ? result.evidence.mx.join(' · ') : 'No MX answer returned'}</dd></div>
+                <div><dt>SPF</dt><dd>{result.evidence.spf ?? 'No SPF record found'}</dd></div>
+                <div><dt>DMARC</dt><dd>{result.evidence.dmarc ?? 'No DMARC record found'}</dd></div>
+              </dl>
+            </details>
+          )}
+          {!result.saved && <p className="demo-account-prompt">Save private reports and unlock account features. <Link href="/sign-up">Create an account <ArrowUpRight aria-hidden="true" /></Link></p>}
           <div className="result-footer"><span>CHECKED {new Date(result.checkedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC', timeZoneName: 'short' })}</span><span>DNS EVIDENCE ONLY</span></div>
           <p className="result-disclaimer">This is a configuration snapshot, not a reputation verdict or proof of compromise.</p>
         </section>

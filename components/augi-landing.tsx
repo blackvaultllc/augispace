@@ -98,7 +98,8 @@ function SiteHeader() {
         <a href="#approach" onClick={() => setMenuOpen(false)}>Our approach</a>
         <a href="#demo" onClick={() => setMenuOpen(false)}>Live demo</a>
         <a href="#plans" onClick={() => setMenuOpen(false)}>Plans</a>
-        <a className="nav-login" href="#demo" onClick={() => setMenuOpen(false)}>Try free <ArrowUpRight aria-hidden="true" /></a>
+        <Link className="nav-signin" href="/sign-in" onClick={() => setMenuOpen(false)}>Sign in</Link>
+        <Link className="nav-login" href="/sign-up" onClick={() => setMenuOpen(false)}>Create account <ArrowUpRight aria-hidden="true" /></Link>
       </nav>
     </header>
   )

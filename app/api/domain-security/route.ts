@@ -1,5 +1,12 @@
+import { generateText } from 'ai'
+import { and, count, eq, gte } from 'drizzle-orm'
 import { domainToASCII } from 'node:url'
+import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
+import { auth } from '@/lib/auth'
+import { db } from '@/lib/db'
+import { investigations, user } from '@/lib/db/schema'
+import { getUtcMonthStart, isOwnerEmail, isPlanTier, planTiers } from '@/lib/plans'
 
 export const runtime = 'nodejs'
 
@@ -14,6 +21,12 @@ type DnsAnswer = {
 type DnsResponse = {
   Answer?: DnsAnswer[]
   Status?: number
+}
+
+type Check = {
+  label: string
+  status: 'present' | 'missing' | 'monitoring' | 'unavailable'
+  detail: string
 }
 
 function normalizeDomain(value: unknown) {
@@ -48,16 +61,56 @@ function answersFor(data: DnsResponse | null, type: number) {
     .map((answer) => (answer.data as string).replace(/^"|"$/g, '').replace(/\\"/g, '"').trim())
 }
 
+function jsonError(message: string, status: number, extra: Record<string, unknown> = {}) {
+  return NextResponse.json({ error: message, ...extra }, { status, headers: { 'Cache-Control': 'private, no-store' } })
+}
+
 export async function POST(request: Request) {
   let body: unknown
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json({ error: 'A valid domain is required.' }, { status: 400 })
+    return jsonError('A valid domain is required.', 400)
   }
 
   const domain = normalizeDomain((body as { domain?: unknown } | null)?.domain)
-  if (!domain) return NextResponse.json({ error: 'Enter a valid public email domain.' }, { status: 400 })
+  if (!domain) return jsonError('Enter a valid public email domain.', 400)
+
+  const session = await auth.api.getSession({ headers: await headers() })
+  let tier: keyof typeof planTiers = 'observer'
+  let userId: string | null = null
+  let isOwner = false
+  let used = 0
+  let limit: number | null = null
+
+  if (session?.user) {
+    const [member] = await db
+      .select({ role: user.role, tier: user.tier })
+      .from(user)
+      .where(eq(user.id, session.user.id))
+      .limit(1)
+
+    if (!member) return jsonError('Your account could not be verified. Please sign in again.', 401)
+    userId = session.user.id
+    isOwner = isOwnerEmail(session.user.email) || member.role === 'owner'
+    tier = isOwner ? 'command' : isPlanTier(member.tier) ? member.tier : 'observer'
+    limit = isOwner ? null : planTiers[tier].monthlyChecks
+
+    const monthStart = getUtcMonthStart()
+    const [usage] = await db
+      .select({ total: count() })
+      .from(investigations)
+      .where(and(eq(investigations.userId, userId), gte(investigations.createdAt, monthStart)))
+    used = Number(usage?.total ?? 0)
+
+    if (limit !== null && used >= limit) {
+      return jsonError('You have reached this plan’s monthly investigation limit.', 429, {
+        tier,
+        usage: { used, limit, remaining: 0 },
+        upgradePath: '/#plans',
+      })
+    }
+  }
 
   const [mxResult, txtResult, dmarcResult] = await Promise.allSettled([
     queryDns(domain, 'MX'),
@@ -66,9 +119,7 @@ export async function POST(request: Request) {
   ])
 
   const available = [mxResult, txtResult, dmarcResult].filter((result) => result.status === 'fulfilled').length
-  if (available === 0) {
-    return NextResponse.json({ error: 'Public DNS lookup is temporarily unavailable.' }, { status: 502 })
-  }
+  if (available === 0) return jsonError('Public DNS lookup is temporarily unavailable.', 502)
 
   const mxAnswers = mxResult.status === 'fulfilled' ? answersFor(mxResult.value, 15).slice(0, 8) : []
   const txtAnswers = txtResult.status === 'fulfilled' ? answersFor(txtResult.value, 16) : []
@@ -79,7 +130,7 @@ export async function POST(request: Request) {
   const mxAvailable = mxResult.status === 'fulfilled'
   const txtAvailable = txtResult.status === 'fulfilled'
   const dmarcAvailable = dmarcResult.status === 'fulfilled'
-  const checks = [
+  const checks: Check[] = [
     {
       label: 'Mail routing (MX)',
       status: !mxAvailable ? 'unavailable' : mxAnswers.length ? 'present' : 'missing',
@@ -93,9 +144,9 @@ export async function POST(request: Request) {
     {
       label: 'Abuse reporting policy (DMARC)',
       status: !dmarcAvailable ? 'unavailable' : !dmarcRecord || !policy ? 'missing' : policy === 'none' ? 'monitoring' : 'present',
-      detail: !dmarcAvailable ? 'The public DMARC query did not return a response.' : !dmarcRecord ? 'No DMARC policy was found at the standard DNS location.' : !policy ? 'A DMARC record was found, but it does not declare a recognizable policy.' : policy === 'none' ? 'A monitoring policy is published; it does not request quarantine or rejection.' : `A ${policy} policy is present at the standard DNS location.`, 
+      detail: !dmarcAvailable ? 'The public DMARC query did not return a response.' : !dmarcRecord ? 'No DMARC policy was found at the standard DNS location.' : !policy ? 'A DMARC record was found, but it does not declare a recognizable policy.' : policy === 'none' ? 'A monitoring policy is published; it does not request quarantine or rejection.' : `A ${policy} policy is present at the standard DNS location.`,
     },
-  ] as const
+  ]
 
   let score = 100
   if (mxAvailable && !mxAnswers.length) score -= 30
@@ -110,17 +161,49 @@ export async function POST(request: Request) {
     : score >= 55
       ? 'Some protective signals are present; review the gaps below.'
       : 'Several baseline signals need attention in the public DNS configuration.'
+  const checkedAt = new Date().toISOString()
+  const evidenceAllowed = !!userId && planTiers[tier].evidence
+  const evidence = evidenceAllowed
+    ? { mx: mxAnswers.map((answer) => answer.slice(0, 240)), spf: spfRecord?.slice(0, 240) ?? null, dmarc: dmarcRecord?.slice(0, 240) ?? null }
+    : null
+
+  let aiExplanation: string | null = null
+  if (userId && planTiers[tier].ai) {
+    try {
+      const result = await generateText({
+        model: 'google/gemini-3.8-flash',
+        system: 'You are AUGI, a defensive email-domain security analyst. Explain only the public DNS evidence supplied. Never infer a person’s identity, intent, reputation, or compromise. Do not make unsupported claims. Give one short paragraph explaining the signals and two concise, prioritized actions for the domain owner. State uncertainty clearly and remain neutral.',
+        prompt: JSON.stringify({ domain, score, summary, checks, evidence }),
+        maxOutputTokens: 420,
+        abortSignal: AbortSignal.timeout(12_000),
+      })
+      aiExplanation = result.text.trim().slice(0, 2400) || null
+    } catch {
+      aiExplanation = 'The evidence-based AI explanation is temporarily unavailable. The DNS findings above remain available for review.'
+    }
+  }
+
+  const report = { domain, score, summary, checkedAt, checks, evidence, aiExplanation }
+  let savedInvestigation: { id: string; domain: string; score: number; createdAt: string; report: typeof report } | null = null
+
+  if (userId) {
+    const id = crypto.randomUUID()
+    const [saved] = await db
+      .insert(investigations)
+      .values({ id, userId, domain, score, report })
+      .returning({ id: investigations.id, createdAt: investigations.createdAt })
+
+    if (!saved) return jsonError('The investigation was completed, but could not be saved.', 500)
+    used += 1
+    savedInvestigation = { id, domain, score, createdAt: saved.createdAt.toISOString(), report }
+  }
 
   return NextResponse.json({
-    domain,
-    score,
-    summary,
-    checkedAt: new Date().toISOString(),
-    checks,
-    evidence: {
-      mx: mxAnswers.map((answer) => answer.slice(0, 240)),
-      spf: spfRecord?.slice(0, 240) ?? null,
-      dmarc: dmarcRecord?.slice(0, 240) ?? null,
-    },
+    ...report,
+    result: report,
+    saved: !!userId,
+    tier: userId ? tier : 'public',
+    investigation: savedInvestigation,
+    usage: userId ? { used, limit, remaining: limit === null ? null : Math.max(0, limit - used) } : null,
   }, { headers: { 'Cache-Control': 'private, no-store' } })
 }
