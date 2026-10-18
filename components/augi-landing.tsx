@@ -96,7 +96,7 @@ export function SiteHeader() {
         <Link href="/approach" onClick={() => setMenuOpen(false)}>Our approach</Link>
         <Link href="/demo" onClick={() => setMenuOpen(false)}>Live demo</Link>
         <Link href="/plans" onClick={() => setMenuOpen(false)}>Plans</Link>
-        <Link className="nav-signin" href="/sign-in" onClick={() => setMenuOpen(false)}>Sign in</Link>
+        <Link className="nav-signin" href="/sign-in" onClick={() => setMenuOpen(false)}>Log in</Link>
         <Link className="nav-login" href="/sign-up" onClick={() => setMenuOpen(false)}>Create account <ArrowUpRight aria-hidden="true" /></Link>
       </nav>
     </header>
@@ -111,8 +111,8 @@ function Hero() {
         <h1 id="hero-title">Know what&apos;s<br />behind an <span>email.</span></h1>
         <p className="hero-description">AUGI turns public email-domain signals into clear security context, so you can make your next move with more confidence.</p>
         <div className="hero-actions">
-          <a className="button-primary" href="#demo">Run a free check <ArrowRight aria-hidden="true" /></a>
-          <a className="button-secondary" href="#approach">Explore AUGI <ArrowDownRight aria-hidden="true" /></a>
+          <Link className="button-primary" href="/demo">Run a free check <ArrowRight aria-hidden="true" /></Link>
+          <Link className="button-secondary" href="/approach">Explore AUGI <ArrowDownRight aria-hidden="true" /></Link>
         </div>
         <div className="hero-proof"><span className="proof-icon"><LockKeyhole aria-hidden="true" /></span><span>Your email stays yours. The demo checks the domain only.</span></div>
         <div className="hero-secondary-links"><Link href="/approach">Explore how AUGI works <ArrowUpRight aria-hidden="true" /></Link><Link href="/plans">View plans <ArrowUpRight aria-hidden="true" /></Link></div>
@@ -165,7 +165,7 @@ export function IntelligenceBand() {
         <div className="section-label"><span>MEET YOUR SECURITY COPILOT</span><span className="section-label-line" /><span>AUGI / 01</span></div>
         <h2 id="band-title">Artificial intelligence.<br /><span>Human judgment.</span></h2>
         <p>Built to make technical security signals easier to understand, not to make decisions on your behalf. Every useful answer should connect back to evidence and a clear next step.</p>
-        <a className="text-link" href="#demo">See the signal demo <ArrowRight aria-hidden="true" /></a>
+        <Link className="text-link" href="/demo">See the signal demo <ArrowRight aria-hidden="true" /></Link>
       </div>
       <div className="band-graphic" aria-hidden="true">
         <div className="band-ring band-ring-one" />
@@ -226,11 +226,11 @@ export function Plans() {
             <p className="plan-description">{plan.detail}</p>
             <div className="plan-price"><strong>{plan.price}</strong><span>/ month</span></div>
             <ul>{plan.features.map((feature) => <li key={feature}><Check aria-hidden="true" />{feature}</li>)}</ul>
-            <a className={plan.featured ? 'plan-action plan-action-featured' : 'plan-action'} href="#demo">{plan.action}<ChevronRight aria-hidden="true" /></a>
+            <Link className={plan.featured ? 'plan-action plan-action-featured' : 'plan-action'} href={plan.name === 'Observer' ? '/demo' : '/sign-up'}>{plan.action}<ChevronRight aria-hidden="true" /></Link>
           </article>
         ))}
       </div>
-      <p className="plan-note"><CircleDot aria-hidden="true" /> Draft monthly plan structure. Paid access and checkout are not active yet.</p>
+      <p className="plan-note"><CircleDot aria-hidden="true" /> Plans stay within their published monthly limits. Sign in to manage access.</p>
     </section>
   )
 }
@@ -240,7 +240,7 @@ export function SiteFooter() {
     <footer className="site-footer section-wrap">
       <div className="footer-main"><BrandMark /><p>Intelligence in service of people.<br />Built by Serpent Intelligence Systems.</p></div>
       <div className="footer-links"><Link href="/approach">Our approach</Link><Link href="/demo">Try the demo</Link><Link href="/plans">Plans</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/acceptable-use">Acceptable use</Link></div>
-      <div className="footer-bottom"><span>© 2026 SERPENT INTELLIGENCE SYSTEMS</span><span><span className="pulse-dot" /> PUBLIC SIGNALS · DEFENSIVE USE</span><a href="#top">BACK TO TOP <ArrowUpRight aria-hidden="true" /></a></div>
+      <div className="footer-bottom"><span>© 2026 SERPENT INTELLIGENCE SYSTEMS</span><span><span className="pulse-dot" /> PUBLIC SIGNALS · DEFENSIVE USE</span><Link href="/">BACK TO HOME <ArrowUpRight aria-hidden="true" /></Link></div>
     </footer>
   )
 }
