@@ -392,6 +392,19 @@ a { color: inherit; }
 .landing-path-card strong { max-width: 210px; margin-top: 42px; color: #e4ebef; font-size: 17px; font-weight: 500; letter-spacing: -.03em; line-height: 1.18; }
 .landing-path-card p { max-width: 230px; margin: 10px 0 0; color: #8e9da8; font-size: 10px; line-height: 1.6; }
 .landing-path-card svg { position: absolute; right: 20px; bottom: 21px; width: 16px; height: 16px; color: var(--cyan); }
+.truth-gallery { padding: 96px 0 112px; border-top: 1px solid var(--line); }
+.truth-gallery-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; margin-bottom: 36px; }
+.truth-gallery-heading h2 { margin: 19px 0 0; color: #eef3f6; font-size: clamp(36px, 5vw, 58px); font-weight: 500; letter-spacing: -.07em; line-height: .98; }
+.truth-gallery-heading h2 span { color: var(--cyan); }
+.truth-gallery-heading > p { max-width: 410px; margin: 0 0 4px; color: #96a5b0; font-size: 12px; line-height: 1.8; }
+.truth-gallery-grid { display: grid; grid-template-columns: 1.35fr .82fr .82fr; gap: 12px; }
+.truth-image { position: relative; min-width: 0; min-height: 320px; margin: 0; overflow: hidden; border: 1px solid var(--line); background: var(--panel); }
+.truth-image img { width: 100%; height: 100%; object-fit: cover; opacity: .78; filter: saturate(.72) contrast(1.05); transition: transform .5s ease, opacity .3s ease; }
+.truth-image:hover img { transform: scale(1.04); opacity: .94; }
+.truth-image::after { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 40%, rgba(4,8,12,.88)); content: ''; }
+.truth-image figcaption { position: absolute; z-index: 1; right: 18px; bottom: 17px; left: 18px; display: grid; gap: 8px; }
+.truth-image figcaption span { color: var(--cyan); font-family: var(--mono); font-size: 8px; letter-spacing: .12em; }
+.truth-image figcaption strong { max-width: 260px; color: #edf3f5; font-size: 13px; font-weight: 500; line-height: 1.35; }
 .inner-hero { display: flex; min-height: 420px; align-items: flex-end; justify-content: space-between; gap: 40px; padding-top: 108px; padding-bottom: 86px; }
 .inner-hero-copy { max-width: 760px; }
 .inner-hero h1 { margin: 22px 0 17px; color: #eef3f6; font-size: clamp(42px, 7vw, 84px); font-weight: 500; letter-spacing: -.075em; line-height: .98; }
@@ -592,6 +605,10 @@ a { color: inherit; }
   .landing-path-grid { grid-template-columns: 1fr; }
   .landing-path-card { min-height: 170px; }
   .landing-path-card strong { margin-top: 27px; }
+  .truth-gallery-heading { align-items: flex-start; flex-direction: column; }
+  .truth-gallery-grid { grid-template-columns: 1fr 1fr; }
+  .truth-image-wide { grid-column: 1 / -1; }
+  .truth-image { min-height: 240px; }
   .inner-hero { align-items: flex-start; flex-direction: column; min-height: 0; padding-top: 76px; padding-bottom: 60px; }
   .inner-hero-index { width: 100%; }
   .inner-cta { align-items: flex-start; flex-direction: column; }
@@ -607,6 +624,10 @@ a { color: inherit; }
   .landing-paths h2 { font-size: 39px; }
   .landing-path-card { min-height: 155px; padding: 17px; }
   .landing-path-card strong { margin-top: 23px; font-size: 15px; }
+  .truth-gallery { padding: 70px 0 78px; }
+  .truth-gallery-grid { grid-template-columns: 1fr; }
+  .truth-image-wide { grid-column: auto; }
+  .truth-image { min-height: 260px; }
   .inner-hero { padding-top: 58px; padding-bottom: 45px; }
   .inner-hero h1 { font-size: 45px; }
   .inner-hero-index { display: none; }

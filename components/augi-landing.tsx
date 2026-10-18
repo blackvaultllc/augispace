@@ -77,7 +77,7 @@ const plans = [
 function BrandMark() {
   return (
     <Link className="augi-brand" href="/" aria-label="AUGI home">
-      <span className="augi-brand-mark" aria-hidden="true"><span /></span>
+      <span className="augi-brand-mark"><Image src="/augi-serpent-mark.png" alt="" width={40} height={40} priority /></span>
       <span className="augi-brand-name">AUGI<span> / SERPENT INTELLIGENCE</span></span>
     </Link>
   )
@@ -260,6 +260,10 @@ export function AugiLanding() {
             <Link href="/approach" className="landing-path-card"><span>02 / METHOD</span><strong>Understand the AUGI approach</strong><p>See how evidence, context, and defensive action fit together.</p><ArrowUpRight aria-hidden="true" /></Link>
             <Link href="/plans" className="landing-path-card"><span>03 / ACCESS</span><strong>Find your level of depth</strong><p>Explore plan access for independent investigators and teams.</p><ArrowUpRight aria-hidden="true" /></Link>
           </div>
+        </section>
+        <section className="truth-gallery section-wrap" aria-labelledby="truth-gallery-title">
+          <div className="truth-gallery-heading"><div><div className="section-label"><span>THE WORK IS REAL</span><span className="section-label-line" /><span>PUBLIC EVIDENCE / HUMAN CARE</span></div><h2 id="truth-gallery-title">No theater.<br /><span>Just protection.</span></h2></div><p>Real people, public signals, and clear boundaries. AUGI is built to make security understandable without pretending that a single score can tell the whole story.</p></div>
+          <div className="truth-gallery-grid"><figure className="truth-image truth-image-wide"><Image src="/augi-evidence-desk.png" alt="Security researcher reviewing public evidence at a desk" width={1200} height={760} /><figcaption><span>01 / EVIDENCE</span><strong>Trace every conclusion back to something verifiable.</strong></figcaption></figure><figure className="truth-image"><Image src="/augi-public-signal.png" alt="Public communications infrastructure at blue hour" width={900} height={760} /><figcaption><span>02 / SIGNAL</span><strong>Read what the public layer can actually tell you.</strong></figcaption></figure><figure className="truth-image"><Image src="/augi-protection-network.png" alt="Security team reviewing a network map" width={900} height={760} /><figcaption><span>03 / PROTECTION</span><strong>Turn clarity into a safer next step.</strong></figcaption></figure></div>
         </section>
         <SiteFooter />
       </div>
