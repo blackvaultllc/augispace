@@ -46,7 +46,8 @@ export async function POST(request: Request) {
     })
     if (saveError) return NextResponse.json({ error: 'Analysis completed, but the evidence record could not be saved.' }, { status: 500 })
     return NextResponse.json({ analysis: report, barcode, barcodeResult, saved: true }, { headers: { 'Cache-Control': 'private, no-store' } })
-  } catch {
+  } catch (error) {
+    console.error('model call failed:', error)
     return NextResponse.json({ error: 'The visual investigation engine is temporarily unavailable.' }, { status: 503 })
   }
 }

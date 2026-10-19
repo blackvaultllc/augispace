@@ -79,7 +79,8 @@ export async function POST(request: Request) {
 
     if (assistantMessageError) return NextResponse.json({ error: 'The response was generated but could not be saved.' }, { status: 500 })
     return NextResponse.json({ response, retained: true }, { headers: { 'Cache-Control': 'private, no-store' } })
-  } catch {
+  } catch (error) {
+    console.error('model call failed:', error)
     return NextResponse.json({ error: 'The secure copilot is temporarily unavailable. Your question is retained for the next session.', retained: true }, { status: 503 })
   }
 }

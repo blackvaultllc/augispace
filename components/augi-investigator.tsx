@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, type ChangeEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react'
 import { Camera, CheckCircle2, LoaderCircle, ScanBarcode, Upload, X } from 'lucide-react'
 
 type InvestigatorResult = { analysis: string; barcode?: string; saved: boolean }
@@ -48,7 +48,10 @@ async function prepareImage(file: File) {
 
 export function AugiInvestigator() {
   const inputRef = useRef<HTMLInputElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const streamRef = useRef<MediaStream | null>(null)
   const [image, setImage] = useState('')
+  const [cameraOpen, setCameraOpen] = useState(false)
   const [barcode, setBarcode] = useState('')
   const [result, setResult] = useState<InvestigatorResult | null>(null)
   const [busy, setBusy] = useState(false)
@@ -73,6 +76,44 @@ export function AugiInvestigator() {
     }
   }
 
+  const stopCamera = useCallback(() => {
+    streamRef.current?.getTracks().forEach((track) => track.stop())
+    streamRef.current = null
+    setCameraOpen(false)
+  }, [])
+
+  useEffect(() => stopCamera, [stopCamera])
+
+  async function openCamera() {
+    setError('')
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false })
+      streamRef.current = stream
+      setCameraOpen(true)
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+        await videoRef.current.play().catch(() => {})
+      }
+    } catch {
+      setError('The camera could not be opened. Check permissions, or upload a photo instead.')
+    }
+  }
+
+  function captureFrame() {
+    const video = videoRef.current
+    if (!video || !video.videoWidth || !video.videoHeight) return
+    const scale = Math.min(1, MAX_EDGE / Math.max(video.videoWidth, video.videoHeight))
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.max(1, Math.round(video.videoWidth * scale))
+    canvas.height = Math.max(1, Math.round(video.videoHeight * scale))
+    const context = canvas.getContext('2d')
+    if (!context) return
+    context.drawImage(video, 0, 0, canvas.width, canvas.height)
+    setImage(canvas.toDataURL('image/jpeg', JPEG_QUALITY))
+    setResult(null)
+    stopCamera()
+  }
+
   async function analyze() {
     if (!image || busy) return
     setBusy(true)
@@ -95,10 +136,10 @@ export function AugiInvestigator() {
     <div className="investigator-header"><div><span className="workspace-micro-label"><Camera aria-hidden="true" /> VISUAL EVIDENCE LAB</span><h2 id="investigator-title">Capture. Inspect. Preserve.</h2><p>Give AUGI a frame, label, package, device, or document. It will separate visible facts from uncertainty and retain the field report.</p></div><span className="investigator-status"><span className="status-pulse" /> CAPTURE READY</span></div>
     <div className="investigator-grid">
       <div className="capture-stage">
-        {image ? <><img src={image} alt="Evidence capture preview" /><button className="capture-clear" type="button" onClick={() => { setImage(''); setResult(null) }} aria-label="Remove evidence capture"><X aria-hidden="true" /></button></> : <button className="capture-empty" type="button" onClick={() => inputRef.current?.click()}><Upload aria-hidden="true" /><strong>CAPTURE OR UPLOAD EVIDENCE</strong><span>On a phone this opens your camera; on a computer it opens a file picker. Nothing is sent until you analyze it.</span></button>}
-        <input ref={inputRef} className="sr-only" type="file" accept="image/*" capture="environment" onChange={loadImage} />
+        {cameraOpen ? <video ref={videoRef} muted playsInline autoPlay className="camera-preview" /> : image ? <><img src={image} alt="Evidence capture preview" /><button className="capture-clear" type="button" onClick={() => { setImage(''); setResult(null) }} aria-label="Remove evidence capture"><X aria-hidden="true" /></button></> : <div className="capture-fallback-stack"><button className="capture-empty" type="button" onClick={openCamera}><Camera aria-hidden="true" /><strong>OPEN LIVE CAMERA</strong><span>Open the device camera, frame the evidence, and capture a still. Nothing is sent until you analyze it.</span></button><button className="capture-upload-fallback" type="button" onClick={() => inputRef.current?.click()}><Upload aria-hidden="true" /> Or upload a photo</button></div>}
+        <input ref={inputRef} className="sr-only" type="file" accept="image/*" onChange={loadImage} />
       </div>
-      <div className="investigator-controls"><label><span>OPTIONAL BARCODE / SKU</span><div className="barcode-input"><ScanBarcode aria-hidden="true" /><input value={barcode} onChange={(event) => setBarcode(event.target.value.replace(/\D/g, '').slice(0, 14))} inputMode="numeric" placeholder="Scan or enter digits" /></div></label><button className="investigate-button" type="button" disabled={!image || busy} onClick={analyze}>{busy ? <><LoaderCircle className="spin-icon" aria-hidden="true" /> AUGI IS EXAMINING</> : <><Camera aria-hidden="true" /> ANALYZE EVIDENCE</>}</button>{result && <div className="investigator-result"><div className="result-saved"><CheckCircle2 aria-hidden="true" /> RETAINED IN INVESTIGATION LOG</div><p>{result.analysis}</p></div>}{error && <p className="workspace-error" role="alert">{error}</p>}</div>
+      <div className="investigator-controls">{cameraOpen && <div className="camera-actions"><button className="investigate-button" type="button" onClick={captureFrame}><Camera aria-hidden="true" /> CAPTURE FRAME</button><button className="camera-close-button" type="button" onClick={stopCamera}><X aria-hidden="true" /> CLOSE CAMERA</button></div>}<label><span>OPTIONAL BARCODE / SKU</span><div className="barcode-input"><ScanBarcode aria-hidden="true" /><input value={barcode} onChange={(event) => setBarcode(event.target.value.replace(/\D/g, '').slice(0, 14))} inputMode="numeric" placeholder="Scan or enter digits" /></div></label><button className="investigate-button" type="button" disabled={!image || busy} onClick={analyze}>{busy ? <><LoaderCircle className="spin-icon" aria-hidden="true" /> AUGI IS EXAMINING</> : <><Camera aria-hidden="true" /> ANALYZE EVIDENCE</>}</button>{result && <div className="investigator-result"><div className="result-saved"><CheckCircle2 aria-hidden="true" /> RETAINED IN INVESTIGATION LOG</div><p>{result.analysis}</p></div>}{error && <p className="workspace-error" role="alert">{error}</p>}</div>
     </div>
   </section>
 }
