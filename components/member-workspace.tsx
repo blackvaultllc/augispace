@@ -7,6 +7,7 @@ import { Activity, ArrowDownRight, ArrowRight, ArrowUpRight, Check, CircleAlert,
 import { createClient } from '@/lib/supabase/client'
 import { IpLocationMap } from '@/components/ip-location-map'
 import { SecurityCopilot } from '@/components/security-copilot'
+import { AugiInvestigator } from '@/components/augi-investigator'
 import { GeoCommandCenter } from '@/components/geo-command-center'
 import { IpDossierDesk } from '@/components/ip-dossier-desk'
 import type { IpDossier } from '@/lib/ip-dossier'
@@ -191,6 +192,7 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
         </div>
 
         <SecurityCopilot />
+        {owner && <AugiInvestigator />}
 
         <div className="workspace-content-grid">
           <section className="workspace-console" aria-labelledby="investigation-title">

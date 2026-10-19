@@ -164,12 +164,12 @@ export function TacticalRadarMap({ coordinates, radiusMiles, view, beacons, sele
         {/* react-simple-maps consumes bundled TopoJSON at runtime; its geography prop types only accept GeoJSON. */}
         <Geographies geography={worldAtlas as never}>
           {({ geographies }) => geographies.map((geography) => (
-            <Geography key={geography.rsmKey} geography={geography} fill="#0f0f0b" stroke="#4d3f25" strokeWidth={local ? 0.55 : 0.7} tabIndex={-1} style={{ default: { outline: 'none' }, hover: { outline: 'none' }, pressed: { outline: 'none' } }} />
+            <Geography key={geography.rsmKey} geography={geography} fill="#0f0f0b" stroke="#4d3f25" strokeWidth={local ? 0.55 : 0.7} tabIndex={-1} style={{ outline: 'none' }} />
           ))}
         </Geographies>
         {radius && (
           <Geographies geography={radius}>
-            {({ geographies }) => geographies.map((geography) => <Geography key={geography.rsmKey} geography={geography} fill="rgba(202, 164, 85, 0.07)" stroke="#c9a454" strokeWidth={1.1} strokeDasharray="4 3" tabIndex={-1} style={{ default: { outline: 'none' } }} />)}
+            {({ geographies }) => geographies.map((geography) => <Geography key={geography.rsmKey} geography={geography} fill="rgba(202, 164, 85, 0.07)" stroke="#c9a454" strokeWidth={1.1} strokeDasharray="4 3" tabIndex={-1} style={{ outline: 'none' }} />)}
           </Geographies>
         )}
         {placed.filter((item) => item.visible).map(({ beacon }) => (
