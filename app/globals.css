@@ -474,6 +474,10 @@ a { color: inherit; }
 .chart-plot svg { width: 100%; height: 100%; overflow: visible; }
 .chart-area { fill: url(#signalFill); } .chart-line { fill: none; stroke: var(--cyan); stroke-width: 3; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 5px rgba(140,232,220,.4)); } .chart-point { fill: var(--cyan); stroke: #051016; stroke-width: 3; }
 .chart-footer { justify-content: space-between; margin: 12px 0 0 30px; font-size: 7px; }
+.chart-footer .chart-source { margin-left: auto; color: var(--cyan); letter-spacing: .06em; }
+.chart-source a { display: inline-flex; align-items: center; gap: 5px; color: inherit; text-decoration: none; }
+.chart-source a:hover { color: #d7fff8; }
+.chart-source svg { width: 11px; height: 11px; }
 .signal-definitions { padding: 22px; }
 .definition-head { display: flex; align-items: center; gap: 8px; padding-bottom: 18px; border-bottom: 1px solid var(--line); color: var(--cyan); font: 8px var(--mono); letter-spacing: .12em; }
 .definition-head svg { width: 15px; height: 15px; }
