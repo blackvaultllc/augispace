@@ -61,7 +61,7 @@ function estimateMeters(rssi: number | null, txPower: number | null) {
 async function readText(server: BluetoothServer, service: string, characteristic: string) {
   try {
     const value = await (await (await server.getPrimaryService(service)).getCharacteristic(characteristic)).readValue()
-    return decoder.decode(value.buffer).replace(/\0/g, '').trim().slice(0, 80) || null
+    return decoder.decode(value.buffer as ArrayBuffer).replace(/\0/g, '').trim().slice(0, 80) || null
   } catch {
     return null
   }

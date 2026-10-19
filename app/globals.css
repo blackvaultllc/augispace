@@ -108,6 +108,15 @@ a { color: inherit; }
   .copilot-panel { margin: 28px 0; padding: 24px; border: 1px solid var(--line); background: linear-gradient(145deg, rgba(15,25,32,.96), rgba(7,12,17,.9)); }
   .copilot-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
   .copilot-heading h2 { margin: 12px 0 0; color: #edf3f5; font-size: 24px; font-weight: 500; letter-spacing: -.04em; }
+  .copilot-identity { display: flex; align-items: center; gap: 13px; }
+  .augi-terminal-face { position: relative; display: grid; width: 52px; height: 42px; flex: none; place-items: center; border: 1px solid rgba(140,232,220,.55); border-radius: 9px; background: linear-gradient(145deg, rgba(140,232,220,.12), rgba(6,15,21,.95)); box-shadow: inset 0 0 18px rgba(140,232,220,.08), 0 0 18px rgba(140,232,220,.08); }
+  .augi-terminal-face::before { position: absolute; top: 7px; right: 7px; width: 4px; height: 4px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); content: ''; }
+  .augi-face-eyes { display: flex; gap: 13px; margin-top: 1px; }
+  .augi-face-eyes i { display: block; width: 6px; height: 7px; border-radius: 2px; background: var(--cyan); box-shadow: 0 0 7px rgba(140,232,220,.8); }
+  .augi-face-mouth { position: absolute; bottom: 9px; left: 50%; width: 17px; height: 5px; border-bottom: 1px solid var(--cyan); border-radius: 0 0 12px 12px; transform: translateX(-50%); }
+  .augi-terminal-face.is-thinking .augi-face-eyes i { animation: augi-blink 1.2s ease-in-out infinite; }
+  .augi-terminal-face.is-thinking .augi-face-mouth { width: 9px; border-radius: 0; }
+  @keyframes augi-blink { 0%, 92%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.18); } }
   .copilot-heading .workspace-micro-label { display: flex; align-items: center; gap: 7px; }
   .copilot-heading .workspace-micro-label svg { width: 13px; height: 13px; color: var(--cyan); }
   .copilot-retention { display: inline-flex; align-items: center; gap: 6px; color: var(--cyan); font-family: var(--mono); font-size: 8px; letter-spacing: .1em; }

@@ -46,7 +46,7 @@ export async function POST(request: Request) {
 
   try {
     const result = await generateText({
-      model: 'openai/gpt-6.1-sol',
+      model: 'openai/gpt-6.1-sol-fast',
       system: SYSTEM_PROMPT,
       messages: [
         ...(recent ?? []).reverse().map((item) => ({ role: item.role as 'user' | 'assistant', content: item.content })),
