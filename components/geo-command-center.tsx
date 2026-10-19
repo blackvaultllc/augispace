@@ -393,7 +393,7 @@ export function GeoCommandCenter({ dossiers = [], focus = null, onOpenDossier }:
       </div>
 
       <form className="geo-cli" onSubmit={submitCommand} aria-label="Tactical diagnostic command line">
-        <span className="geo-cli-prefix"><Terminal aria-hidden="true" /> AGAMOSS<span> $</span></span>
+        <span className="geo-cli-prefix"><Terminal aria-hidden="true" /> AUGI<span> $</span></span>
         <label className="sr-only" htmlFor="geo-command-input">Enter a supported diagnostic command</label>
         <input id="geo-command-input" value={command} onChange={(event) => setCommand(event.target.value)} onKeyDown={handleCommandKeyDown} autoComplete="off" spellCheck={false} placeholder="sec --radius 100  ·  radar --global  ·  beacons --list" />
         <button type="submit" aria-label="Run diagnostic command"><Command aria-hidden="true" /> EXECUTE</button>

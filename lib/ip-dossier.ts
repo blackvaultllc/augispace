@@ -37,7 +37,7 @@ export function formatDossierText(dossier: IpDossier) {
   const { report } = dossier
   const place = [report.location.city, report.location.region, report.location.country].filter(Boolean).join(', ') || 'Unknown'
   const lines = [
-    `AGAMOSS IP DOSSIER — ${report.ip} (${report.version})`,
+    `AUGI IP DOSSIER — ${report.ip} (${report.version})`,
     `Last observed: ${new Date(report.observedAt).toUTCString()}`,
     `Lookups saved: ${dossier.lookupCount}`,
     '',
@@ -69,7 +69,7 @@ export function formatDossierText(dossier: IpDossier) {
 export function dossierMailto(dossier: IpDossier) {
   const text = formatDossierText(dossier)
   const body = text.length > MAILTO_BODY_LIMIT ? `${text.slice(0, MAILTO_BODY_LIMIT)}\n\n[Truncated — attach the exported file for the full dossier.]` : text
-  return `mailto:?subject=${encodeURIComponent(`AGAMOSS IP dossier: ${dossier.ip}`)}&body=${encodeURIComponent(body)}`
+  return `mailto:?subject=${encodeURIComponent(`AUGI IP dossier: ${dossier.ip}`)}&body=${encodeURIComponent(body)}`
 }
 
 export function downloadDossier(dossier: IpDossier, format: 'json' | 'txt') {

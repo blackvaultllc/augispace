@@ -4,29 +4,29 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: {
-    default: 'AGAMOSS — Email Domain Intelligence',
-    template: '%s | AGAMOSS',
+    default: 'AUGI — Email Domain Intelligence',
+    template: '%s | AUGI',
   },
   description: 'Review public email-domain DNS signals, including MX, SPF, and DMARC configuration, with clear defensive context.',
-  applicationName: 'AGAMOSS',
+  applicationName: 'AUGI',
   keywords: [
     'email domain security',
     'email security posture',
     'SPF DMARC lookup',
     'email authentication analysis',
     'domain security intelligence',
-    'AGAMOSS',
+    'AUGI',
     'Serpent Intelligence Systems',
   ],
   openGraph: {
-    title: 'AGAMOSS — Email Domain Intelligence',
+    title: 'AUGI — Email Domain Intelligence',
     description: 'Understand public email-domain DNS signals with privacy-first, evidence-led guidance.',
     type: 'website',
-    siteName: 'AGAMOSS',
+    siteName: 'AUGI',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AGAMOSS — Email Domain Intelligence',
+    title: 'AUGI — Email Domain Intelligence',
     description: 'Understand public email-domain DNS signals with privacy-first, evidence-led guidance.',
   },
   robots: { index: true, follow: true },

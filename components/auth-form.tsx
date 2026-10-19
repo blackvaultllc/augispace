@@ -71,9 +71,9 @@ export function AuthForm({ mode, notice, nextPath = '/workspace' }: { mode: 'sig
       <div className="auth-ambient auth-ambient-one" aria-hidden="true" />
       <div className="auth-ambient auth-ambient-two" aria-hidden="true" />
       <section className="auth-panel" aria-labelledby="auth-title">
-        <Link className="auth-back-link" href="/"><ArrowLeft aria-hidden="true" /> Back to AGAMOSS</Link>
+        <Link className="auth-back-link" href="/"><ArrowLeft aria-hidden="true" /> Back to AUGI</Link>
         <div className="auth-brand-mark" aria-hidden="true"><Fingerprint /></div>
-        <p className="auth-eyebrow">AGAMOSS / OWNER ACCESS</p>
+        <p className="auth-eyebrow">AUGI / OWNER ACCESS</p>
         <h1 id="auth-title">{isSignUp ? 'A clearer picture starts here.' : 'Welcome back.'}</h1>
         <p className="auth-description">{isSignUp ? 'Register the configured owner email to save domain investigations and return to the private security workspace.' : 'Sign in with the configured owner account to return to saved investigations and the private security workspace.'}</p>
         {notice && <p className="auth-description" role="status">{notice}</p>}

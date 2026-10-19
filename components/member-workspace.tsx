@@ -166,7 +166,7 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
     <main className="workspace-page">
       <div className="workspace-shell">
         <header className="workspace-header">
-          <Link className="workspace-brand" href="/" aria-label="AGAMOSS home"><span className="workspace-brand-mark" aria-hidden="true"><span /></span><span>AGAMOSS<span className="workspace-brand-caption"> / OWNER INTELLIGENCE</span></span></Link>
+          <Link className="workspace-brand" href="/" aria-label="AUGI home"><span className="workspace-brand-mark" aria-hidden="true"><span /></span><span>AUGI<span className="workspace-brand-caption"> / OWNER INTELLIGENCE</span></span></Link>
           <div className="workspace-header-actions">
             <span className="workspace-tier"><span />{tierLabel.toUpperCase()}</span>
             <button className="workspace-signout" type="button" onClick={signOut}><LogOut aria-hidden="true" /> Sign out</button>
@@ -175,7 +175,7 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
 
         <section className="workspace-welcome" aria-labelledby="workspace-title">
           <div>
-            <p className="workspace-eyebrow"><span className="pulse-dot" /> AGAMOSS PRIVATE WORKSPACE / OWNER ACCESS</p>
+            <p className="workspace-eyebrow"><span className="pulse-dot" /> AUGI PRIVATE WORKSPACE / OWNER ACCESS</p>
             <h1 id="workspace-title">Welcome, <span>{name || 'Analyst'}.</span></h1>
             <p className="workspace-welcome-copy">Your saved domain investigations and evidence, in one private place.</p>
           </div>
@@ -233,7 +233,7 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
           </aside>
         </div>
 
-        <footer className="workspace-footer"><span>© 2026 AGAMOSS</span><span><span className="pulse-dot" /> DEFENSIVE USE · PUBLIC RECORDS ONLY</span><Link href="/">AGAMOSS HOME <ArrowUpRight aria-hidden="true" /></Link></footer>
+        <footer className="workspace-footer"><span>© 2026 AUGI</span><span><span className="pulse-dot" /> DEFENSIVE USE · PUBLIC RECORDS ONLY</span><Link href="/">AUGI HOME <ArrowUpRight aria-hidden="true" /></Link></footer>
       </div>
     </main>
   )
