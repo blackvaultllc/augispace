@@ -7,6 +7,9 @@ import { Activity, ArrowDownRight, ArrowRight, ArrowUpRight, Check, CircleAlert,
 import { createClient } from '@/lib/supabase/client'
 import { IpLocationMap } from '@/components/ip-location-map'
 import { SecurityCopilot } from '@/components/security-copilot'
+import { GeoCommandCenter } from '@/components/geo-command-center'
+import { IpDossierDesk } from '@/components/ip-dossier-desk'
+import type { IpDossier } from '@/lib/ip-dossier'
 
 type DomainCheck = {
   label: string
@@ -42,6 +45,7 @@ type Props = {
   used: number
   limit: number | null
   investigations: SavedInvestigation[]
+  dossiers?: IpDossier[]
 }
 
 const statusLabels: Record<DomainCheck['status'], string> = {
@@ -89,8 +93,21 @@ function ReportDetails({ report }: { report: InvestigationReport }) {
   )
 }
 
-export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, limit, investigations: initialInvestigations }: Props) {
+export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, limit, investigations: initialInvestigations, dossiers: initialDossiers = [] }: Props) {
   const router = useRouter()
+  const [dossiers, setDossiers] = useState(initialDossiers)
+  const [selectedDossierId, setSelectedDossierId] = useState<string | null>(initialDossiers[0]?.id ?? null)
+  const [radarFocus, setRadarFocus] = useState<{ dossierId: string; nonce: number } | null>(null)
+
+  function showDossierOnRadar(dossier: IpDossier) {
+    setRadarFocus({ dossierId: dossier.id, nonce: Date.now() })
+    document.getElementById('geo-command-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  function openDossier(id: string) {
+    setSelectedDossierId(id)
+    document.getElementById('dossier-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
   const [emailInput, setEmailInput] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -163,6 +180,9 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
           </div>
           <div className="workspace-profile"><span className="workspace-avatar"><Fingerprint aria-hidden="true" /></span><div><strong>{name}</strong><span>{email}</span></div></div>
         </section>
+
+        {owner && <GeoCommandCenter dossiers={dossiers} focus={radarFocus} onOpenDossier={openDossier} />}
+        {owner && <IpDossierDesk dossiers={dossiers} selectedId={selectedDossierId} onSelect={setSelectedDossierId} onChange={setDossiers} onShowOnRadar={showDossierOnRadar} />}
 
         <div className="workspace-metrics" aria-label="Account overview">
           <article className="workspace-metric"><span className="workspace-metric-icon"><Radar aria-hidden="true" /></span><div><span>PLAN</span><strong>{tierLabel}</strong><small>{tier === 'observer' ? 'Public DNS surface view' : tier === 'analyst' ? 'Expanded DNS evidence' : 'Evidence plus AUGI analysis'}</small></div></article>
