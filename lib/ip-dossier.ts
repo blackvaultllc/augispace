@@ -58,7 +58,7 @@ export function formatDossierText(dossier: IpDossier) {
     ...report.history.map((entry) => `  ${new Date(entry.observedAt).toUTCString()} — ${[entry.city, entry.country].filter(Boolean).join(', ') || 'Unknown'} — ${entry.org ?? 'Unknown org'}`),
     '',
     'ANALYST NOTES',
-    `  ${dossier.notes.trim() || 'None'}`,
+    `  ${(dossier.notes ?? '').trim() || 'None'}`,
     '',
     `Sources: ${report.sources.join('; ')}`,
     report.accuracyNote,

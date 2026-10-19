@@ -13,7 +13,7 @@ export function isPlanTier(value: string): value is PlanTier {
 export const OWNER_EMAIL = 'blackhatterxvi@gmail.com'
 
 export function isOwnerEmail(email: string) {
-  return email.trim().toLowerCase() === OWNER_EMAIL
+  return (email ?? '').trim().toLowerCase() === OWNER_EMAIL
 }
 
 export function getUtcMonthStart(now = new Date()) {

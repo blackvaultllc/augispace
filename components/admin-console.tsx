@@ -21,7 +21,7 @@ export function AdminConsole({ email, role }: Props) {
   const [output, setOutput] = useState('This is a fixed command guide, not a system shell. Type help to see available topics.')
 
   function runCommand(value = command) {
-    const normalized = value.trim().toLowerCase()
+    const normalized = (value ?? '').trim().toLowerCase()
     const responses: Record<string, string> = {
       help: 'Topics: whoami · show definitions · show access policy · show audit status. This guide does not execute operating-system commands, change accounts, or access infrastructure.',
       whoami: `${email} · access=${role} · session verified by Supabase Auth.`,
