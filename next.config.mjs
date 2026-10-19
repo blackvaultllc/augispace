@@ -3,6 +3,14 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // pg loads pg-cloudflare dynamically on Workers; the file tracer can't see it,
+  // so force its compiled files into the server bundle.
+  outputFileTracingIncludes: {
+    '/*': [
+      './node_modules/pg-cloudflare/dist/**/*',
+      './node_modules/.pnpm/pg-cloudflare@*/node_modules/pg-cloudflare/dist/**/*',
+    ],
+  },
   async headers() {
     return [
       {
