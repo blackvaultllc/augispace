@@ -16,7 +16,7 @@
       "service": "ip-intelligence-terminal-design-xf"
     }
   ],
-    "observability": {
+  "observability": {
     "enabled": true
   },
   "vars": {
@@ -25,4 +25,4 @@
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_-kEJcyE50uN8oORyL8gfjg_XOLyIvL9",
     "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_-kEJcyE50uN8oORyL8gfjg_XOLyIvL9"
   }
-  // Secrets (DATABASE_URL, BETTER_AUTH_SECRET, Stripe keys) live only in the Cloudflare dashboard.
+}
