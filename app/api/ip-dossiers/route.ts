@@ -73,12 +73,48 @@ async function lookupReverseDns(ip: string, version: number) {
   }
 }
 
-async function lookupNetwork(ip: string) {
-  const response = await fetch(`https://ipwho.is/${encodeURIComponent(ip)}`, { signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS), cache: 'no-store' })
-  if (!response.ok) throw new Error('The public IP registry did not respond.')
+const LOOKUP_HEADERS = { Accept: 'application/json', 'User-Agent': 'AUGI-IP-Dossier/1.0 (+https://augi.space)' }
+
+async function lookupIpWho(ip: string): Promise<IpWhoResponse> {
+  const response = await fetch(`https://ipwho.is/${encodeURIComponent(ip)}`, { headers: LOOKUP_HEADERS, signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS), cache: 'no-store' })
+  if (!response.ok) throw new Error(`ipwho.is returned HTTP ${response.status}`)
   const data = await response.json() as IpWhoResponse
-  if (!data.success) throw new Error('The public IP registry has no record for this address.')
+  if (!data.success) throw new Error(data.message ?? 'ipwho.is has no record for this address.')
   return data
+}
+
+async function lookupGeoJs(ip: string): Promise<IpWhoResponse> {
+  const response = await fetch(`https://get.geojs.io/v1/ip/geo/${encodeURIComponent(ip)}.json`, { headers: LOOKUP_HEADERS, signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS), cache: 'no-store' })
+  if (!response.ok) throw new Error(`geojs returned HTTP ${response.status}`)
+  const d = await response.json() as { country?: string; country_code?: string; region?: string; city?: string; latitude?: string | number; longitude?: string | number; timezone?: string; asn?: number; organization_name?: string; continent_code?: string }
+  const lat = Number.parseFloat(String(d.latitude ?? ''))
+  const lon = Number.parseFloat(String(d.longitude ?? ''))
+  return {
+    success: true,
+    continent: d.continent_code,
+    country: d.country,
+    country_code: d.country_code,
+    region: d.region,
+    city: d.city,
+    latitude: Number.isFinite(lat) ? lat : undefined,
+    longitude: Number.isFinite(lon) ? lon : undefined,
+    timezone: { id: d.timezone },
+    connection: { asn: typeof d.asn === 'number' ? d.asn : undefined, org: d.organization_name, isp: d.organization_name },
+  }
+}
+
+async function lookupNetwork(ip: string) {
+  try {
+    return await lookupIpWho(ip)
+  } catch (primary) {
+    console.error('IP lookup: ipwho.is failed', primary)
+    try {
+      return await lookupGeoJs(ip)
+    } catch (secondary) {
+      console.error('IP lookup: geojs failed', secondary)
+      throw new Error('The public IP registry did not respond.')
+    }
+  }
 }
 
 function clean(value: unknown, max = 160) {
