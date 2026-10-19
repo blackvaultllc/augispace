@@ -24,8 +24,11 @@
   ],
   "workers_dev": false,
   "preview_urls": false,
+  // Keeps variables set in the dashboard from being wiped on deploy
+  "keep_vars": true,
   "vars": {
     "BETTER_AUTH_URL": "https://augi.space",
+    "GOOGLE_CLIENT_ID": "660280240040-s8aeejbip9gr636ujegv970v2j9sdj1o.apps.googleusercontent.com",
     "NEXT_PUBLIC_SUPABASE_URL": "https://mlkryxtiknlccksokpse.supabase.co",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_-kEJcyE50uN8oORyL8gfjg_XOLyIvL9",
     "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_-kEJcyE50uN8oORyL8gfjg_XOLyIvL9"
