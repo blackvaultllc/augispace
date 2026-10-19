@@ -7,7 +7,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   BookOpen,
-  Activity,
   BadgeCheck,
   BrainCircuit,
   Check,
@@ -25,6 +24,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { PublicThreatBulletin } from '@/components/public-threat-bulletin'
+import { PublicThreatTrend } from '@/components/public-threat-trend'
 
 const capabilities = [
   {
@@ -272,7 +272,7 @@ export function AugiLanding() {
         <section className="signal-lab section-wrap" aria-labelledby="signal-lab-title">
           <div className="signal-lab-heading"><div><div className="section-label"><span>THE SIGNAL LAB</span><span className="section-label-line" /><span>LEARN THE GRAPH</span></div><h2 id="signal-lab-title">Security posture,<br /><span>made visible.</span></h2></div><p>Like a market chart, a security graph shows movement and pressure over time. It is a teaching surface—not a promise, prediction, or identity verdict.</p></div>
           <div className="signal-lab-grid">
-            <div className="posture-chart" role="img" aria-label="Illustrative security posture chart showing public signal movement over time"><div className="chart-toolbar"><span><Activity aria-hidden="true" /> POSTURE INDEX</span><strong>+18.4%</strong><small>30D / ILLUSTRATIVE</small></div><div className="chart-plot"><span className="chart-axis-label chart-axis-top">100</span><span className="chart-axis-label chart-axis-mid">50</span><span className="chart-axis-label chart-axis-bottom">0</span><svg viewBox="0 0 760 260" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="signalFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="var(--cyan)" stopOpacity=".26" /><stop offset="100%" stopColor="var(--cyan)" stopOpacity="0" /></linearGradient></defs><path className="chart-area" d="M0 211 C55 198 66 170 115 182 S167 135 216 153 S269 123 313 135 S356 82 405 111 S460 92 506 97 S555 60 602 78 S672 32 760 48 L760 260 L0 260 Z" /><path className="chart-line" d="M0 211 C55 198 66 170 115 182 S167 135 216 153 S269 123 313 135 S356 82 405 111 S460 92 506 97 S555 60 602 78 S672 32 760 48" /><circle cx="760" cy="48" r="5" className="chart-point" /></svg></div><div className="chart-footer"><span>30 DAYS AGO</span><span>PUBLIC SIGNAL CHANGE</span><span>NOW</span></div></div>
+            <PublicThreatTrend />
             <div className="signal-definitions"><div className="definition-head"><BookOpen aria-hidden="true" /><span>FIELD DEFINITIONS</span></div><dl><div><dt>Posture index</dt><dd>A teaching summary of how consistently a domain publishes protective signals.</dd></div><div><dt>Evidence</dt><dd>The public record behind a result: DNS answers, timestamps, and source context.</dd></div><div><dt>Exposure</dt><dd>A condition that may increase risk. It is not proof that an account or person is compromised.</dd></div><div><dt>Trend</dt><dd>Movement across checks. Trends need context and should not be read like financial advice.</dd></div></dl></div>
           </div>
         </section>
