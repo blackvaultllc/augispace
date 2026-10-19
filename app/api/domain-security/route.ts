@@ -1,12 +1,8 @@
 import { generateText } from 'ai'
-import { and, count, eq, gte } from 'drizzle-orm'
 import { domainToASCII } from 'node:url'
-import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { db } from '@/lib/db'
-import { investigations, user } from '@/lib/db/schema'
-import { getUtcMonthStart, isOwnerEmail, isPlanTier, planTiers } from '@/lib/plans'
+import { getUtcMonthStart, isOwnerEmail } from '@/lib/plans'
+import { createClient } from '@/lib/supabase/server'
 
 export const runtime = 'nodejs'
 
@@ -92,40 +88,22 @@ export async function POST(request: Request) {
   const domain = normalizeDomain((body as { domain?: unknown } | null)?.domain)
   if (!domain) return jsonError('Enter a valid public email domain.', 400)
 
-  const session = await auth.api.getSession({ headers: await headers() })
-  let tier: keyof typeof planTiers = 'observer'
-  let userId: string | null = null
-  let isOwner = false
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const isOwner = !!user && isOwnerEmail(user.email ?? '')
+  const userId = isOwner ? user.id : null
   let used = 0
-  let limit: number | null = null
+  const limit: number | null = null
 
-  if (session?.user) {
-    const [member] = await db
-      .select({ role: user.role, tier: user.tier })
-      .from(user)
-      .where(eq(user.id, session.user.id))
-      .limit(1)
+  if (userId) {
+    const { count: usageCount, error: usageError } = await supabase
+      .from('investigations')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .gte('created_at', getUtcMonthStart().toISOString())
 
-    if (!member) return jsonError('Your account could not be verified. Please sign in again.', 401)
-    userId = session.user.id
-    isOwner = isOwnerEmail(session.user.email) || member.role === 'owner'
-    tier = isOwner ? 'command' : isPlanTier(member.tier) ? member.tier : 'observer'
-    limit = isOwner ? null : planTiers[tier].monthlyChecks
-
-    const monthStart = getUtcMonthStart()
-    const [usage] = await db
-      .select({ total: count() })
-      .from(investigations)
-      .where(and(eq(investigations.userId, userId), gte(investigations.createdAt, monthStart)))
-    used = Number(usage?.total ?? 0)
-
-    if (limit !== null && used >= limit) {
-      return jsonError('You have reached this plan’s monthly investigation limit.', 429, {
-        tier,
-        usage: { used, limit, remaining: 0 },
-        upgradePath: '/#plans',
-      })
-    }
+    if (usageError) return jsonError('Saved investigation usage could not be loaded.', 500)
+    used = usageCount ?? 0
   }
 
   const [mxResult, txtResult, dmarcResult] = await Promise.allSettled([
@@ -178,13 +156,13 @@ export async function POST(request: Request) {
       ? 'Some protective signals are present; review the gaps below.'
       : 'Several baseline signals need attention in the public DNS configuration.'
   const checkedAt = new Date().toISOString()
-  const evidenceAllowed = !!userId && planTiers[tier].evidence
+  const evidenceAllowed = !!userId
   const evidence = evidenceAllowed
     ? { mx: mxAnswers.map((answer) => answer.slice(0, 240)), spf: spfRecord?.slice(0, 240) ?? null, dmarc: dmarcRecord?.slice(0, 240) ?? null }
     : null
 
   let aiExplanation: string | null = null
-  if (userId && planTiers[tier].ai) {
+  if (userId) {
     try {
       const result = await generateText({
         model: 'google/gemini-3.8-flash',
@@ -204,22 +182,22 @@ export async function POST(request: Request) {
   let savedInvestigation: { id: string; domain: string; score: number; createdAt: string; report: typeof report } | null = null
 
   if (userId) {
-    const id = crypto.randomUUID()
-    const [saved] = await db
-      .insert(investigations)
-      .values({ id, userId, domain, score, report })
-      .returning({ id: investigations.id, createdAt: investigations.createdAt })
+    const { data: saved, error: saveError } = await supabase
+      .from('investigations')
+      .insert({ user_id: userId, domain, score, report })
+      .select('id, created_at')
+      .single()
 
-    if (!saved) return jsonError('The investigation was completed, but could not be saved.', 500)
+    if (saveError || !saved) return jsonError('The investigation was completed, but could not be saved.', 500)
     used += 1
-    savedInvestigation = { id, domain, score, createdAt: saved.createdAt.toISOString(), report }
+    savedInvestigation = { id: saved.id, domain, score, createdAt: saved.created_at, report }
   }
 
   return NextResponse.json({
     ...report,
     result: report,
     saved: !!userId,
-    tier: userId ? tier : 'public',
+    tier: userId ? 'owner' : 'public',
     investigation: savedInvestigation,
     usage: userId ? { used, limit, remaining: limit === null ? null : Math.max(0, limit - used) } : null,
   }, { headers: { 'Cache-Control': 'private, no-store' } })

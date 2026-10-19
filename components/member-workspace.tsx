@@ -4,7 +4,7 @@ import { useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Activity, ArrowDownRight, ArrowRight, ArrowUpRight, Check, CircleAlert, Clock3, Command, Fingerprint, LoaderCircle, LockKeyhole, LogOut, Mail, Radar, ShieldCheck, Sparkles } from 'lucide-react'
-import { authClient } from '@/lib/auth-client'
+import { createClient } from '@/lib/supabase/client'
 import { IpLocationMap } from '@/components/ip-location-map'
 import { SecurityCopilot } from '@/components/security-copilot'
 
@@ -138,23 +138,17 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
   }
 
   async function signOut() {
-    await authClient.signOut()
+    const supabase = createClient()
+    await supabase.auth.signOut()
     router.push('/')
     router.refresh()
-  }
-
-  async function openBilling(path: '/api/billing/checkout' | '/api/billing/portal', plan?: 'analyst' | 'command') {
-    const response = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(plan ? { plan } : {}) })
-    const payload = await response.json() as { url?: string; error?: string }
-    if (!response.ok || !payload.url) { setError(payload.error || 'Billing could not be opened.'); return }
-    window.location.href = payload.url
   }
 
   return (
     <main className="workspace-page">
       <div className="workspace-shell">
         <header className="workspace-header">
-          <Link className="workspace-brand" href="/" aria-label="AUGI home"><span className="workspace-brand-mark" aria-hidden="true"><span /></span><span>AUGI<span className="workspace-brand-caption"> / MEMBER INTELLIGENCE</span></span></Link>
+          <Link className="workspace-brand" href="/" aria-label="AGAMOSS home"><span className="workspace-brand-mark" aria-hidden="true"><span /></span><span>AGAMOSS<span className="workspace-brand-caption"> / OWNER INTELLIGENCE</span></span></Link>
           <div className="workspace-header-actions">
             <span className="workspace-tier"><span />{tierLabel.toUpperCase()}</span>
             <button className="workspace-signout" type="button" onClick={signOut}><LogOut aria-hidden="true" /> Sign out</button>
@@ -163,7 +157,7 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
 
         <section className="workspace-welcome" aria-labelledby="workspace-title">
           <div>
-            <p className="workspace-eyebrow"><span className="pulse-dot" /> SECURE MEMBER WORKSPACE / {owner ? 'OWNER ACCESS' : 'PERSONAL ACCOUNT'}</p>
+            <p className="workspace-eyebrow"><span className="pulse-dot" /> AGAMOSS PRIVATE WORKSPACE / OWNER ACCESS</p>
             <h1 id="workspace-title">Welcome, <span>{name || 'Analyst'}.</span></h1>
             <p className="workspace-welcome-copy">Your saved domain investigations and evidence, in one private place.</p>
           </div>
@@ -211,16 +205,13 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
             ) : (
               <div className="workspace-history-empty"><span><Clock3 aria-hidden="true" /></span><p>Your saved investigations will appear here after your first check.</p></div>
             )}
-            {tier === 'observer' && <div className="workspace-billing-actions"><button type="button" onClick={() => openBilling('/api/billing/checkout', 'analyst')}>Upgrade to Analyst <ArrowUpRight aria-hidden="true" /></button><button type="button" onClick={() => openBilling('/api/billing/checkout', 'command')}>Upgrade to Command <ArrowUpRight aria-hidden="true" /></button></div>}
-            {tier !== 'observer' && <button className="workspace-plan-link workspace-manage-billing" type="button" onClick={() => openBilling('/api/billing/portal')}>Manage subscription <ArrowRight aria-hidden="true" /></button>}
             {owner && <Link className="workspace-plan-link" href="/admin"><Command aria-hidden="true" /> Open admin control plane <ArrowRight aria-hidden="true" /></Link>}
-            <Link className="workspace-plan-link" href="/#plans">Explore plan access <ArrowRight aria-hidden="true" /></Link>
             <div className="workspace-plan-note"><Sparkles aria-hidden="true" /><p>{tier === 'observer' ? 'Analyst unlocks raw DNS evidence and 30 monthly checks. Command adds AUGI explanations and 150 checks.' : tier === 'analyst' ? 'Command adds evidence-led AI explanations and 150 monthly checks.' : 'AUGI explanations connect each recommendation back to public DNS evidence.'}</p></div>
             <div className="workspace-scope-note"><Check aria-hidden="true" /><p>Configuration signals are not identity verification or proof of compromise. Use findings for defensive action.</p></div>
           </aside>
         </div>
 
-        <footer className="workspace-footer"><span>© 2026 SERPENT INTELLIGENCE SYSTEMS</span><span><span className="pulse-dot" /> DEFENSIVE USE · PUBLIC RECORDS ONLY</span><Link href="/">AUGI HOME <ArrowUpRight aria-hidden="true" /></Link></footer>
+        <footer className="workspace-footer"><span>© 2026 AGAMOSS</span><span><span className="pulse-dot" /> DEFENSIVE USE · PUBLIC RECORDS ONLY</span><Link href="/">AGAMOSS HOME <ArrowUpRight aria-hidden="true" /></Link></footer>
       </div>
     </main>
   )

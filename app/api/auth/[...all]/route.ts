@@ -1,4 +1,8 @@
-import { toNextJsHandler } from 'better-auth/next-js'
-import { auth } from '@/lib/auth'
+import { NextResponse } from 'next/server'
 
-export const { GET, POST } = toNextJsHandler(auth)
+function disabled() {
+  return NextResponse.json({ error: 'Use Supabase Auth.' }, { status: 410 })
+}
+
+export const GET = disabled
+export const POST = disabled

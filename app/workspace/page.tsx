@@ -1,61 +1,43 @@
 import type { Metadata } from 'next'
-import { and, count, desc, eq, gte } from 'drizzle-orm'
-import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { MemberWorkspace, type SavedInvestigation } from '@/components/member-workspace'
-import { auth } from '@/lib/auth'
-import { db } from '@/lib/db'
-import { investigations, user } from '@/lib/db/schema'
-import { getUtcMonthStart, isOwnerEmail, isPlanTier, planTiers } from '@/lib/plans'
+import { getUtcMonthStart } from '@/lib/plans'
+import { createClient } from '@/lib/supabase/server'
+import { isOwnerEmail } from '@/lib/plans'
 
-export const metadata: Metadata = { title: 'Member workspace' }
+export const metadata: Metadata = { title: 'Owner workspace' }
 
 export default async function WorkspacePage() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session?.user) redirect('/sign-in')
+  const supabase = await createClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) redirect('/sign-in')
+  if (!isOwnerEmail(user.email ?? '')) redirect('/sign-in?error=owner_only')
 
-  const [account] = await db
-    .select({ role: user.role, tier: user.tier })
-    .from(user)
-    .where(eq(user.id, session.user.id))
-    .limit(1)
+  const monthStart = getUtcMonthStart().toISOString()
+  const [{ count: usageCount, error: usageError }, { data: savedRows, error: savedError }] = await Promise.all([
+    supabase.from('investigations').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('created_at', monthStart),
+    supabase.from('investigations').select('id, domain, score, report, created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(12),
+  ])
 
-  if (!account) redirect('/sign-in')
+  if (usageError || savedError) throw new Error('The owner workspace data could not be loaded.')
 
-  const owner = isOwnerEmail(session.user.email) || account.role === 'owner'
-  const tier = owner ? 'command' : isPlanTier(account.tier) ? account.tier : 'observer'
-  const plan = planTiers[tier]
-  const monthStart = getUtcMonthStart()
-  const [usage] = await db
-    .select({ total: count() })
-    .from(investigations)
-    .where(and(eq(investigations.userId, session.user.id), gte(investigations.createdAt, monthStart)))
-  const savedRows = await db
-    .select()
-    .from(investigations)
-    .where(eq(investigations.userId, session.user.id))
-    .orderBy(desc(investigations.createdAt))
-    .limit(12)
-
-  const used = Number(usage?.total ?? 0)
-  const limit = owner ? null : plan.monthlyChecks
-  const saved: SavedInvestigation[] = savedRows.map((row) => ({
+  const saved: SavedInvestigation[] = (savedRows ?? []).map((row) => ({
     id: row.id,
     domain: row.domain,
     score: Number(row.score),
-    createdAt: row.createdAt.toISOString(),
+    createdAt: row.created_at,
     report: row.report as SavedInvestigation['report'],
   }))
 
   return (
     <MemberWorkspace
-      name={session.user.name}
-      email={session.user.email}
-      owner={owner}
-      tier={tier}
-      tierLabel={owner ? 'Owner access' : plan.label}
-      used={used}
-      limit={limit}
+      name={typeof user.user_metadata?.name === 'string' ? user.user_metadata.name : user.email ?? 'Owner'}
+      email={user.email ?? ''}
+      owner
+      tier="command"
+      tierLabel="Owner access"
+      used={usageCount ?? 0}
+      limit={null}
       investigations={saved}
     />
   )

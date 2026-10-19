@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, ArrowRight, Fingerprint, LockKeyhole, LoaderCircle, Mail } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
-export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
+export function AuthForm({ mode, notice, nextPath = '/workspace' }: { mode: 'sign-in' | 'sign-up'; notice?: string; nextPath?: string }) {
   const router = useRouter()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -34,28 +34,20 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
 
     setBusy(false)
     if (result.error) {
-      setError('We could not complete that request. Check your details and try again.')
+      if (result.error.code === 'email_not_confirmed') {
+        setError('Confirm your email using the link we sent before signing in.')
+      } else if (result.error.code === 'over_request_rate_limit') {
+        setError('Too many attempts. Wait a moment, then try again.')
+      } else if (result.error.code === 'weak_password') {
+        setError('Choose a stronger password with at least 8 characters.')
+      } else {
+        setError('We could not complete that request. Check your details and try again.')
+      }
       return
     }
 
-    router.push(isSignUp ? '/sign-in?created=1' : '/workspace')
+    router.push(isSignUp && !result.data.session ? '/sign-in?created=1' : nextPath)
     router.refresh()
-  }
-
-  async function handleGoogleSignIn() {
-    setError('')
-    setBusy(true)
-    const supabase = createClient()
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/workspace`,
-      },
-    })
-    if (error) {
-      setBusy(false)
-      setError('Google sign-in is temporarily unavailable. Please try again.')
-    }
   }
 
   return (
@@ -63,19 +55,13 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
       <div className="auth-ambient auth-ambient-one" aria-hidden="true" />
       <div className="auth-ambient auth-ambient-two" aria-hidden="true" />
       <section className="auth-panel" aria-labelledby="auth-title">
-        <Link className="auth-back-link" href="/"><ArrowLeft aria-hidden="true" /> Back to AUGI</Link>
+        <Link className="auth-back-link" href="/"><ArrowLeft aria-hidden="true" /> Back to AGAMOSS</Link>
         <div className="auth-brand-mark" aria-hidden="true"><Fingerprint /></div>
-        <p className="auth-eyebrow">SERPENT INTELLIGENCE SYSTEMS / MEMBER ACCESS</p>
+        <p className="auth-eyebrow">AGAMOSS / OWNER ACCESS</p>
         <h1 id="auth-title">{isSignUp ? 'A clearer picture starts here.' : 'Welcome back.'}</h1>
-        <p className="auth-description">{isSignUp ? 'Create a secure account to save your domain investigations and build a history of the signals that matter.' : 'Sign in to return to your saved investigations and security workspace.'}</p>
+        <p className="auth-description">{isSignUp ? 'Register the configured owner email to save domain investigations and return to the private security workspace.' : 'Sign in with the configured owner account to return to saved investigations and the private security workspace.'}</p>
+        {notice && <p className="auth-description" role="status">{notice}</p>}
 
-        <button className="auth-google-button" type="button" onClick={handleGoogleSignIn} disabled={busy}>
-          <span className="google-g" aria-hidden="true">G</span>
-          Continue with Google
-          <ArrowRight aria-hidden="true" />
-        </button>
-
-        <div className="auth-divider"><span />OR WITH EMAIL<span /></div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           {isSignUp && (
@@ -101,7 +87,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
         </form>
 
         <p className="auth-switch">{isSignUp ? 'Already have an account?' : "Don't have an account yet?"} <Link href={isSignUp ? '/sign-in' : '/sign-up'}>{isSignUp ? 'Sign in' : 'Create one'}</Link></p>
-        <p className="auth-privacy"><LockKeyhole aria-hidden="true" />Your account is protected with an encrypted, server-managed session.</p>
+        <p className="auth-privacy"><LockKeyhole aria-hidden="true" />Authentication is provided by Supabase. Email confirmation may be required.</p>
       </section>
     </main>
   )
