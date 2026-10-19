@@ -4,15 +4,10 @@ import { updateSession } from '@/lib/supabase/proxy'
 const OWNER_EMAIL = 'blackhatterxvi@gmail.com'
 
 export async function middleware(request: NextRequest) {
-  const response = await updateSession(request)
+  const { response, user } = await updateSession(request)
   const isProtected = request.nextUrl.pathname === '/' || request.nextUrl.pathname.startsWith('/workspace') || request.nextUrl.pathname.startsWith('/admin')
   if (!isProtected) return response
 
-  const { createServerClient } = await import('@supabase/ssr')
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
-    cookies: { getAll: () => request.cookies.getAll(), setAll: () => {} },
-  })
-  const { data: { user } } = await supabase.auth.getUser()
   if (user?.email?.toLowerCase() !== OWNER_EMAIL) {
     const signIn = new URL('/sign-in', request.url)
     signIn.searchParams.set('next', request.nextUrl.pathname)
