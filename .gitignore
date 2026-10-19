@@ -9,6 +9,11 @@ __v0_jsx-dev-runtime.ts
 
 # Environment variables
 .env*.local
+.dev.vars
+
+# Cloudflare / OpenNext build output
+.open-next/
+.wrangler/
 
 # Common ignores
 node_modules

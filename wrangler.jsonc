@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ip-intelligence-terminal-design-xf",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-12",
+  // nodejs_compat is required: the API routes use Node APIs (pg, Better Auth, Stripe).
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      // OpenNext calls the worker itself for ISR/revalidation; the service name must equal "name" above.
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "ip-intelligence-terminal-design-xf"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+  // Secrets and variables are NOT stored here. Set them in the Cloudflare dashboard
+  // (Workers & Pages > this worker > Settings > Variables and Secrets). See .dev.vars.example for the names.
+}
