@@ -1,17 +1,38 @@
-import { and, desc, eq, gte } from 'drizzle-orm'
-import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { db } from '@/lib/db'
-import { assistantMessages, investigations } from '@/lib/db/schema'
+import { getOwnerContext } from '@/lib/supabase/owner'
 
 export async function GET() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session?.user) return NextResponse.json({ error: 'Sign in required.' }, { status: 401 })
-  const start = new Date(); start.setUTCHours(0, 0, 0, 0)
-  const [checks, messages] = await Promise.all([
-    db.select({ domain: investigations.domain, score: investigations.score, createdAt: investigations.createdAt }).from(investigations).where(and(eq(investigations.userId, session.user.id), gte(investigations.createdAt, start))).orderBy(desc(investigations.createdAt)),
-    db.select({ role: assistantMessages.role, content: assistantMessages.content, createdAt: assistantMessages.createdAt }).from(assistantMessages).where(and(eq(assistantMessages.userId, session.user.id), gte(assistantMessages.createdAt, start))).orderBy(desc(assistantMessages.createdAt)),
+  const context = await getOwnerContext()
+  if (!context) return NextResponse.json({ error: 'Owner access required.' }, { status: 403 })
+
+  const start = new Date()
+  start.setUTCHours(0, 0, 0, 0)
+  const since = start.toISOString()
+  const [checksResult, messagesResult] = await Promise.all([
+    context.supabase
+      .from('investigations')
+      .select('domain, score, created_at')
+      .eq('user_id', context.user.id)
+      .gte('created_at', since)
+      .order('created_at', { ascending: false }),
+    context.supabase
+      .from('assistant_messages')
+      .select('role, content, created_at')
+      .eq('user_id', context.user.id)
+      .gte('created_at', since)
+      .order('created_at', { ascending: false }),
   ])
-  return NextResponse.json({ date: start.toISOString().slice(0, 10), checks, assistantMessages: messages, totals: { checks: checks.length, assistantMessages: messages.length } }, { headers: { 'Cache-Control': 'private, no-store' } })
+
+  if (checksResult.error || messagesResult.error) {
+    return NextResponse.json({ error: 'The daily report could not be loaded.' }, { status: 500 })
+  }
+
+  const checks = checksResult.data ?? []
+  const messages = messagesResult.data ?? []
+  return NextResponse.json({
+    date: since.slice(0, 10),
+    checks,
+    assistantMessages: messages,
+    totals: { checks: checks.length, assistantMessages: messages.length },
+  }, { headers: { 'Cache-Control': 'private, no-store' } })
 }
