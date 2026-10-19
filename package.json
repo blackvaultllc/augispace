@@ -23,6 +23,7 @@
     "lucide-react": "^1.16.0",
     "next": "16.4.0",
     "pg": "^8.23.1",
+    "pg-cloudflare": "^1.4.1",
     "react": "^19",
     "react-dom": "^19",
     "react-simple-maps": "^5.0.5",

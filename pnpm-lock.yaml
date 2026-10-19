@@ -44,6 +44,9 @@ importers:
       pg:
         specifier: ^8.23.1
         version: 8.23.1
+      pg-cloudflare:
+        specifier: ^1.4.1
+        version: 1.4.1
       react:
         specifier: ^19
         version: 19.2.4
@@ -6185,8 +6188,7 @@ snapshots:
 
   pathe@2.0.3: {}
 
-  pg-cloudflare@1.4.1:
-    optional: true
+  pg-cloudflare@1.4.1: {}
 
   pg-connection-string@2.14.1: {}
 
