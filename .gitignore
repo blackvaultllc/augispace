@@ -23,3 +23,7 @@ supabase/.temp/
 
 .agents/
 skills-lock.json
+
+sis-network-hub/
+next-env.d.ts
+tsconfig.tsbuildinfo
