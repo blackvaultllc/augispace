@@ -7,6 +7,7 @@ import { Activity, ArrowDownRight, ArrowRight, ArrowUpRight, Check, CircleAlert,
 import { createClient } from '@/lib/supabase/client'
 import { IpLocationMap } from '@/components/ip-location-map'
 import { SecurityCopilot } from '@/components/security-copilot'
+import { GeoCommandCenter } from '@/components/geo-command-center'
 
 type DomainCheck = {
   label: string
@@ -163,6 +164,8 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
           </div>
           <div className="workspace-profile"><span className="workspace-avatar"><Fingerprint aria-hidden="true" /></span><div><strong>{name}</strong><span>{email}</span></div></div>
         </section>
+
+        {owner && <GeoCommandCenter />}
 
         <div className="workspace-metrics" aria-label="Account overview">
           <article className="workspace-metric"><span className="workspace-metric-icon"><Radar aria-hidden="true" /></span><div><span>PLAN</span><strong>{tierLabel}</strong><small>{tier === 'observer' ? 'Public DNS surface view' : tier === 'analyst' ? 'Expanded DNS evidence' : 'Evidence plus AUGI analysis'}</small></div></article>

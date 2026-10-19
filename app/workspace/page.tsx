@@ -5,7 +5,7 @@ import { getUtcMonthStart } from '@/lib/plans'
 import { createClient } from '@/lib/supabase/server'
 import { isOwnerEmail } from '@/lib/plans'
 
-export const metadata: Metadata = { title: 'Owner workspace' }
+export const metadata: Metadata = { title: 'Geolocation Command Center' }
 
 export default async function WorkspacePage() {
   const supabase = await createClient()
