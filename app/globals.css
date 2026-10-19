@@ -1180,3 +1180,39 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 .dossier-notes-row span { font-size: 0.78rem; color: #8d8668; }
 .dossier-detail .workspace-disclaimer { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0; font-size: 0.75rem; line-height: 1.45; color: #8d8668; }
 .dossier-detail .workspace-disclaimer svg { width: 14px; height: 14px; flex: none; margin-top: 0.15rem; }
+
+/* IP dossier desk: form, list, detail, notes */
+.dossier-form { display: grid; gap: 0.6rem; margin: 1rem 0; }
+.dossier-form .workspace-submit { min-height: 48px; width: 100%; }
+.dossier-layout { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1rem; }
+@media (min-width: 900px) { .dossier-layout { grid-template-columns: minmax(220px, 280px) 1fr; align-items: start; } }
+.dossier-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; max-height: 320px; overflow-y: auto; }
+.dossier-list li { margin: 0; }
+.dossier-list button { display: grid; gap: 0.15rem; width: 100%; text-align: left; min-height: 52px; padding: 0.65rem 0.85rem; border: 1px solid rgba(227,184,92,0.22); border-radius: 10px; background: #0b0d10; color: #e8e0c4; font: inherit; cursor: pointer; }
+.dossier-list button strong { font-size: 0.95rem; overflow-wrap: anywhere; }
+.dossier-list button small { font-size: 0.72rem; color: #8d8668; overflow-wrap: anywhere; }
+.dossier-list button.is-current { border-color: #e3b85c; background: rgba(227,184,92,0.08); }
+.dossier-empty { display: flex; gap: 0.7rem; align-items: center; padding: 1rem; border: 1px dashed rgba(227,184,92,0.25); border-radius: 10px; color: #8d8668; font-size: 0.85rem; }
+.dossier-empty p { margin: 0; }
+.dossier-empty svg { width: 20px; height: 20px; flex: none; }
+.dossier-detail { display: grid; gap: 0.9rem; min-width: 0; padding: 1rem; border: 1px solid rgba(227,184,92,0.2); border-radius: 12px; background: rgba(11,13,16,0.6); }
+.dossier-detail > header { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; justify-content: space-between; }
+.dossier-detail > header h3 { margin: 0.15rem 0 0; font-size: 1.15rem; overflow-wrap: anywhere; }
+.dossier-detail-tools { display: flex; gap: 0.5rem; }
+.dossier-detail-tools button { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: 44px; min-width: 44px; padding: 0 0.8rem; border: 1px solid rgba(227,184,92,0.35); border-radius: 8px; background: transparent; color: #e3b85c; font: inherit; font-size: 0.72rem; letter-spacing: 0.12em; cursor: pointer; }
+.dossier-detail-tools button:disabled { opacity: 0.4; cursor: not-allowed; }
+.dossier-detail-tools svg { width: 16px; height: 16px; }
+.dossier-history { border: 1px solid rgba(227,184,92,0.16); border-radius: 10px; padding: 0.6rem 0.85rem; font-size: 0.82rem; }
+.dossier-history summary { cursor: pointer; color: #e3b85c; min-height: 32px; }
+.dossier-history ol { margin: 0.5rem 0 0; padding-left: 1.1rem; display: grid; gap: 0.4rem; }
+.dossier-history li { display: grid; gap: 0.1rem; }
+.dossier-history time { color: #8d8668; font-size: 0.72rem; }
+.dossier-notes-label { font-size: 0.62rem; letter-spacing: 0.14em; color: #8d8668; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.dossier-notes { display: block; width: 100%; min-height: 110px; resize: vertical; padding: 0.75rem; border: 1px solid rgba(227,184,92,0.25); border-radius: 10px; background: #0b0d10; color: #e8e0c4; font: inherit; font-size: 16px; line-height: 1.45; }
+.dossier-notes:focus { outline: 2px solid rgba(227,184,92,0.6); outline-offset: 1px; }
+.dossier-notes-row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+.dossier-notes-row .dossier-action { flex: 0 0 auto; }
+.dossier-notes-row .dossier-action:disabled { opacity: 0.4; cursor: not-allowed; }
+.dossier-notes-row span { font-size: 0.78rem; color: #8d8668; }
+.dossier-detail .workspace-disclaimer { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0; font-size: 0.75rem; line-height: 1.45; color: #8d8668; }
+.dossier-detail .workspace-disclaimer svg { width: 14px; height: 14px; flex: none; margin-top: 0.15rem; }
