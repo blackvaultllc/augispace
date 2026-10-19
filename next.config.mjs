@@ -21,7 +21,7 @@ const nextConfig = {
           { key: 'Strict-Transport-Security', value: 'max-age=63072000' },
           // geolocation is allowed for this origin only: the radar's "Enact perimeter scan" needs navigator.geolocation.
           // Camera and microphone stay disabled; the evidence lab uses a file input, not getUserMedia.
-          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(self)' },
+          { key: 'Permissions-Policy', value: 'camera=(self), microphone=(), geolocation=(self)' },
         ],
       },
     ]
