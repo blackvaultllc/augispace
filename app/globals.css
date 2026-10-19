@@ -1216,3 +1216,19 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 .dossier-notes-row span { font-size: 0.78rem; color: #8d8668; }
 .dossier-detail .workspace-disclaimer { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0; font-size: 0.75rem; line-height: 1.45; color: #8d8668; }
 .dossier-detail .workspace-disclaimer svg { width: 14px; height: 14px; flex: none; margin-top: 0.15rem; }
+
+/* Phone fixes: camera preview, radar fit, readable text */
+.camera-preview { display: block; width: 100%; height: 100%; object-fit: cover; background: #000; }
+.investigator-header p { color: #b9b192; font-size: 0.92rem; line-height: 1.55; }
+.investigator-controls label > span { color: #a69a74; }
+.copilot-mode { color: #cfc7a8; font-size: 0.8rem; line-height: 1.55; }
+.copilot-mode strong { color: #e3b85c; }
+@media (max-width: 700px) {
+  .radar-viewport { width: 100% !important; max-width: 100% !important; height: auto !important; min-height: 0 !important; aspect-ratio: 800 / 440 !important; overflow: hidden; }
+  .radar-bearing { font-size: 9px; }
+  .radar-contact-list button { font-size: 11px; min-height: 44px; }
+  .radar-contact-list button strong { font-size: 10px; }
+  .radar-last-ping strong { font-size: 12px; }
+  .radar-last-ping small { font-size: 11px; }
+  .radar-contact-empty { font-size: 12px; }
+}
