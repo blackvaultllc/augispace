@@ -536,6 +536,7 @@ a { color: inherit; }
 .auth-google-button, .auth-submit { display: flex; width: 100%; min-height: 46px; align-items: center; justify-content: center; gap: 10px; border: 1px solid var(--line-bright); background: rgba(6,11,16,.7); color: #e4ebf0; cursor: pointer; font-size: 11px; font-weight: 600; transition: border-color .2s ease, background .2s ease; }
 .auth-google-button:hover:not(:disabled) { border-color: rgba(140,232,220,.55); background: rgba(140,232,220,.06); }
 .auth-google-button > svg { width: 14px; height: 14px; margin-left: auto; color: var(--cyan); }
+.auth-google-mark { display: grid; width: 20px; height: 20px; place-items: center; border: 1px solid rgba(140,232,220,.35); border-radius: 50%; color: var(--cyan); font-family: var(--mono); font-size: 10px; font-weight: 700; }
 .google-g { margin-right: auto; font-family: Arial, sans-serif; font-size: 17px; font-weight: 700; color: #8ce8dc; }
 .auth-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: #748490; font-family: var(--mono); font-size: 7px; letter-spacing: .13em; white-space: nowrap; }
 .auth-divider span { width: 100%; height: 1px; background: var(--line); }
