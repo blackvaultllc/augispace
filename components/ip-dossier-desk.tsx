@@ -54,7 +54,7 @@ export function DossierFacts({ dossier }: { dossier: IpDossier }) {
   ]
   return (
     <dl className="dossier-facts">
-      {rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}
+      {rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd suppressHydrationWarning>{value}</dd></div>)}
     </dl>
   )
 }
