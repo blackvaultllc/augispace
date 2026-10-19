@@ -1058,3 +1058,5 @@ a { color: inherit; }
 }
 @keyframes radar-spin { to { transform:rotate(360deg); } }
 @media (max-width:800px) { .terminal-shell { padding:10px; }.terminal-header,.intro-row,.terminal-footer { align-items:flex-start; flex-direction:column; }.terminal-header { padding:18px; }.header-center,.header-right { width:100%; }.intro-row { padding:35px 20px 25px; }.intro-index { display:none; }.resolver { grid-template-columns:1fr; margin:0 20px; }.resolver-meta { margin-inline:20px; }.overview-grid,.reporting-panel { grid-template-columns:1fr; margin-inline:20px; }.reporting-main { border-right:0; border-bottom:1px solid var(--line); }.data-grid { grid-template-columns:1fr; }.terminal-footer { padding:14px 20px; gap:9px; } }
+
+html { zoom: 1.3; }
