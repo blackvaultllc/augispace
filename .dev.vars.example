@@ -1,0 +1,23 @@
+# Names only. Copy to .dev.vars for local `pnpm run preview`; set the same names in the Cloudflare dashboard
+# (Workers & Pages > this worker > Settings > Variables and Secrets). Mark secrets as "Secret", never commit values.
+
+# Public site URL, no trailing slash, e.g. https://<worker>.<account>.workers.dev (or your custom domain).
+# Better Auth and Stripe redirects read this first; without it the build warns and callbacks can break.
+BETTER_AUTH_URL=
+
+# Secrets
+BETTER_AUTH_SECRET=
+DATABASE_URL=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+# Supabase (public values, but still set them as variables)
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+
+# AI calls use "provider/model" strings through the Vercel AI Gateway. That authenticates automatically on Vercel
+# but not on Cloudflare, so a gateway key is needed here.
+AI_GATEWAY_API_KEY=

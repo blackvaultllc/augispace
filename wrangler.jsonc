@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ip-intelligence-terminal-design-xf",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-12",
+  // nodejs_compat is required: the API routes use Node APIs (pg, Better Auth, Stripe).
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      // OpenNext calls the worker itself for ISR/revalidation; the service name must equal "name" above.
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "ip-intelligence-terminal-design-xf"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "BETTER_AUTH_URL": "https://augi.space",
+    "NEXT_PUBLIC_SUPABASE_URL": "https://mlkryxtiknlccksokpse.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_-kEJcyE50uN8oORyL8gfjg_XOLyIvL9",
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_-kEJcyE50uN8oORyL8gfjg_XOLyIvL9"
+  }
+}
