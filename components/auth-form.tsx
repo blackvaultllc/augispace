@@ -15,6 +15,22 @@ export function AuthForm({ mode, notice, nextPath = '/workspace' }: { mode: 'sig
   const [busy, setBusy] = useState(false)
   const isSignUp = mode === 'sign-up'
 
+  async function handleGoogleSignIn() {
+    setError('')
+    setBusy(true)
+    const supabase = createClient()
+    const callbackUrl = new URL('/auth/callback', window.location.origin)
+    callbackUrl.searchParams.set('next', nextPath)
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: callbackUrl.toString() },
+    })
+    if (oauthError) {
+      setBusy(false)
+      setError('Google sign in is not available yet. Enable the Google provider in Supabase Auth, then try again.')
+    }
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError('')
@@ -62,6 +78,16 @@ export function AuthForm({ mode, notice, nextPath = '/workspace' }: { mode: 'sig
         <p className="auth-description">{isSignUp ? 'Register the configured owner email to save domain investigations and return to the private security workspace.' : 'Sign in with the configured owner account to return to saved investigations and the private security workspace.'}</p>
         {notice && <p className="auth-description" role="status">{notice}</p>}
 
+        {!isSignUp && (
+          <>
+            <button className="auth-google-button" type="button" onClick={handleGoogleSignIn} disabled={busy}>
+              <span className="auth-google-mark" aria-hidden="true">G</span>
+              {busy ? 'CONNECTING TO GOOGLE' : 'CONTINUE WITH GOOGLE'}
+              <ArrowRight aria-hidden="true" />
+            </button>
+            <div className="auth-divider" aria-hidden="true"><span />OR USE EMAIL<span /></div>
+          </>
+        )}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           {isSignUp && (
