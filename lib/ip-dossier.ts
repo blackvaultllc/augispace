@@ -78,7 +78,7 @@ export function downloadDossier(dossier: IpDossier, format: 'json' | 'txt') {
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
-  link.download = `agamoss-dossier-${dossier.ip.replace(/[^a-z0-9]/gi, '-')}.${format}`
+  link.download = `augi-dossier-${dossier.ip.replace(/[^a-z0-9]/gi, '-')}.${format}`
   link.click()
   URL.revokeObjectURL(url)
 }

@@ -176,7 +176,7 @@ export function ThreatTerminal() {
     <main className="terminal-shell">
       <div className="terminal-frame">
         <header className="terminal-header">
-          <a href="#overview" className="wordmark" aria-label="Agamoss Intelligence home">
+          <a href="#overview" className="wordmark" aria-label="AUGI home">
             <span className="wordmark-symbol"><Crosshair aria-hidden="true" /></span>
             <span>AUGI<span className="wordmark-light"> / INTEL</span></span>
           </a>
