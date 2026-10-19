@@ -110,7 +110,7 @@ function Hero() {
   return (
     <section className="hero-section" id="top" aria-labelledby="hero-title">
       <div className="hero-copy">
-        <div className="hero-kicker"><span className="pulse-dot" /> AN INTELLIGENCE LAYER FOR A SAFER INBOX</div>
+        <div className="hero-kicker"><span className="pulse-dot" /> AUGI / ARTIFICIAL UNIVERSAL GENERAL INTELLIGENCE</div>
         <h1 id="hero-title">Know what&apos;s<br />behind an <span>email.</span></h1>
         <p className="hero-description">AUGI turns public email-domain signals into clear security context, so you can make your next move with more confidence.</p>
         <div className="hero-actions">
