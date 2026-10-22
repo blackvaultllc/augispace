@@ -10,6 +10,8 @@ import { SecurityCopilot } from '@/components/security-copilot'
 import { AugiInvestigator } from '@/components/augi-investigator'
 import { GeoCommandCenter } from '@/components/geo-command-center'
 import { IpDossierDesk } from '@/components/ip-dossier-desk'
+import { WelcomeTour } from '@/components/welcome-tour'
+import type { LiveThreatFeed } from '@/lib/live-threat-feed'
 import type { IpDossier } from '@/lib/ip-dossier'
 
 type DomainCheck = {
@@ -41,12 +43,14 @@ type Props = {
   name: string
   email: string
   owner: boolean
+  role?: string
   tier: 'observer' | 'analyst' | 'command'
   tierLabel: string
   used: number
   limit: number | null
   investigations: SavedInvestigation[]
   dossiers?: IpDossier[]
+  liveFeed?: LiveThreatFeed | null
 }
 
 const statusLabels: Record<DomainCheck['status'], string> = {
@@ -94,7 +98,7 @@ function ReportDetails({ report }: { report: InvestigationReport }) {
   )
 }
 
-export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, limit, investigations: initialInvestigations, dossiers: initialDossiers = [] }: Props) {
+export function MemberWorkspace({ name, email, owner, role = 'owner', tier, tierLabel, used, limit, investigations: initialInvestigations, dossiers: initialDossiers = [], liveFeed = null }: Props) {
   const router = useRouter()
   const [dossiers, setDossiers] = useState(initialDossiers)
   const [selectedDossierId, setSelectedDossierId] = useState<string | null>(initialDossiers[0]?.id ?? null)
@@ -175,20 +179,21 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
 
         <section className="workspace-welcome" aria-labelledby="workspace-title">
           <div>
-            <p className="workspace-eyebrow"><span className="pulse-dot" /> AUGI PRIVATE WORKSPACE / OWNER ACCESS</p>
+            <p className="workspace-eyebrow"><span className="pulse-dot" /> AUGI PRIVATE WORKSPACE / {role === 'owner' ? 'OWNER ACCESS' : 'STAFF ACCESS'}</p>
             <h1 id="workspace-title">Welcome, <span>{name || 'Analyst'}.</span></h1>
             <p className="workspace-welcome-copy">Your saved domain investigations and evidence, in one private place.</p>
           </div>
           <div className="workspace-profile"><span className="workspace-avatar"><Fingerprint aria-hidden="true" /></span><div><strong>{name}</strong><span>{email}</span></div></div>
+          <WelcomeTour role={role} />
         </section>
 
-        {owner && <GeoCommandCenter dossiers={dossiers} focus={radarFocus} onOpenDossier={openDossier} />}
+        {owner && <GeoCommandCenter dossiers={dossiers} focus={radarFocus} onOpenDossier={openDossier} liveFeed={liveFeed} />}
         {owner && <IpDossierDesk dossiers={dossiers} selectedId={selectedDossierId} onSelect={setSelectedDossierId} onChange={setDossiers} onShowOnRadar={showDossierOnRadar} />}
 
         <div className="workspace-metrics" aria-label="Account overview">
           <article className="workspace-metric"><span className="workspace-metric-icon"><Radar aria-hidden="true" /></span><div><span>PLAN</span><strong>{tierLabel}</strong><small>{tier === 'observer' ? 'Public DNS surface view' : tier === 'analyst' ? 'Expanded DNS evidence' : 'Evidence plus AUGI analysis'}</small></div></article>
           <article className="workspace-metric"><span className="workspace-metric-icon"><Activity aria-hidden="true" /></span><div><span>THIS MONTH</span><strong>{limit === null ? `${usedCount} / ∞` : `${usedCount} / ${limit}`}</strong><small>{remaining === null ? 'Unlimited owner investigations' : `${remaining} checks remaining this month`}</small></div></article>
-          <article className="workspace-metric"><span className="workspace-metric-icon"><LockKeyhole aria-hidden="true" /></span><div><span>ACCOUNT</span><strong>{owner ? 'Owner' : 'Protected'}</strong><small>Private, account-scoped reports</small></div></article>
+          <article className="workspace-metric"><span className="workspace-metric-icon"><LockKeyhole aria-hidden="true" /></span><div><span>ACCOUNT</span><strong>{role === 'owner' ? 'Owner' : role === 'staff' ? 'Staff' : 'Protected'}</strong><small>Private, account-scoped reports</small></div></article>
         </div>
 
         <SecurityCopilot />
@@ -228,6 +233,8 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
               <div className="workspace-history-empty"><span><Clock3 aria-hidden="true" /></span><p>Your saved investigations will appear here after your first check.</p></div>
             )}
             {owner && <Link className="workspace-plan-link" href="/admin"><Command aria-hidden="true" /> Open admin control plane <ArrowRight aria-hidden="true" /></Link>}
+            {!owner && tier !== 'observer' && <BillingPortalLink />}
+            {!owner && tier === 'observer' && <Link className="workspace-plan-link" href="/plans"><Sparkles aria-hidden="true" /> Upgrade your plan <ArrowRight aria-hidden="true" /></Link>}
             <div className="workspace-plan-note"><Sparkles aria-hidden="true" /><p>{tier === 'observer' ? 'Analyst unlocks raw DNS evidence and 30 monthly checks. Command adds AUGI explanations and 150 checks.' : tier === 'analyst' ? 'Command adds evidence-led AI explanations and 150 monthly checks.' : 'AUGI explanations connect each recommendation back to public DNS evidence.'}</p></div>
             <div className="workspace-scope-note"><Check aria-hidden="true" /><p>Configuration signals are not identity verification or proof of compromise. Use findings for defensive action.</p></div>
           </aside>
@@ -236,5 +243,37 @@ export function MemberWorkspace({ name, email, owner, tier, tierLabel, used, lim
         <footer className="workspace-footer"><span>© 2026 AUGI</span><span><span className="pulse-dot" /> DEFENSIVE USE · PUBLIC RECORDS ONLY</span><Link href="/">AUGI HOME <ArrowUpRight aria-hidden="true" /></Link></footer>
       </div>
     </main>
+  )
+}
+
+function BillingPortalLink() {
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState('')
+
+  async function openPortal() {
+    setBusy(true)
+    setMessage('')
+    try {
+      const response = await fetch('/api/billing/portal', { method: 'POST' })
+      const payload = await response.json() as { url?: string; error?: string }
+      if (payload.url) {
+        window.location.href = payload.url
+        return
+      }
+      setMessage(payload.error || 'The billing portal is not available yet.')
+    } catch {
+      setMessage('The billing portal could not be reached.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <span className="workspace-plan-link-wrap">
+      <button className="workspace-plan-link" type="button" onClick={openPortal} disabled={busy}>
+        <Sparkles aria-hidden="true" /> {busy ? 'Opening portal…' : 'Manage subscription'} <ArrowRight aria-hidden="true" />
+      </button>
+      {message && <small role="alert">{message}</small>}
+    </span>
   )
 }

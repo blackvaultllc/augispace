@@ -1,6 +1,7 @@
 import { isIP } from 'node:net'
 import { NextResponse } from 'next/server'
 import { isOwnerEmail } from '@/lib/plans'
+import { getIntegrationSecret, INTEGRATION_KEYS } from '@/lib/integration-secrets'
 import { createClient } from '@/lib/supabase/server'
 import type { IpDossier, IpDossierReport } from '@/lib/ip-dossier'
 
@@ -68,6 +69,36 @@ async function lookupReverseDns(ip: string, version: number) {
     const data = await response.json() as { Answer?: { type?: number; data?: unknown }[] }
     const names = (data.Answer ?? []).filter((answer) => answer.type === 12 && typeof answer.data === 'string').map((answer) => (answer.data as string).replace(/\.$/, '').slice(0, 253))
     return names.length ? names.slice(0, 4) : []
+  } catch {
+    return null
+  }
+}
+
+async function lookupReputation(ip: string): Promise<IpDossierReport['reputation']> {
+  const apiKey = (await getIntegrationSecret(INTEGRATION_KEYS.abuseipdb).catch(() => null)) ?? process.env.ABUSEIPDB_API_KEY ?? null
+  if (!apiKey) return null
+  try {
+    const url = new URL('https://api.abuseipdb.com/api/v2/check')
+    url.searchParams.set('ipAddress', ip)
+    url.searchParams.set('maxAgeInDays', '90')
+    const response = await fetch(url, {
+      headers: { Key: apiKey, Accept: 'application/json' },
+      signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS),
+      cache: 'no-store',
+    })
+    if (!response.ok) return null
+    const data = await response.json() as { data?: { abuseConfidenceScore?: number; totalReports?: number; numDistinctUsers?: number; lastReportedAt?: string | null; usageType?: string | null; isp?: string | null } }
+    const d = data.data
+    if (!d) return null
+    return {
+      source: 'AbuseIPDB',
+      abuseConfidenceScore: typeof d.abuseConfidenceScore === 'number' ? d.abuseConfidenceScore : null,
+      totalReports: d.totalReports ?? 0,
+      numDistinctUsers: d.numDistinctUsers ?? 0,
+      lastReportedAt: d.lastReportedAt ?? null,
+      usageType: d.usageType ?? null,
+      isp: d.isp ?? null,
+    }
   } catch {
     return null
   }
@@ -155,6 +186,7 @@ export async function POST(request: Request) {
     return jsonError(caught instanceof Error ? caught.message : 'The public IP registry is unavailable.', 502)
   }
   const reverseDns = await lookupReverseDns(ip, version)
+  const reputation = await lookupReputation(ip)
 
   const { data: existing, error: existingError } = await supabase
     .from('ip_dossiers')
@@ -198,9 +230,12 @@ export async function POST(request: Request) {
     location,
     connection,
     reverseDns,
+    reputation,
     history,
-    sources: ['ipwho.is public registry', 'dns.google reverse DNS'],
-    accuracyNote: 'IP geolocation points to the registered network area, often a city or ISP hub. It does not identify a person, home address, or device location.',
+    sources: ['ipwho.is public registry', 'dns.google reverse DNS', ...(reputation ? ['AbuseIPDB'] : [])],
+    accuracyNote: reputation
+      ? 'IP geolocation points to the registered network area. Abuse confidence reflects AbuseIPDB community reports and does not prove current malicious activity or identify a person.'
+      : 'IP geolocation points to the registered network area, often a city or ISP hub. It does not identify a person, home address, or device location.',
   }
 
   const query = existing

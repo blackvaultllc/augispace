@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { isOwnerEmail } from '@/lib/plans'
 import { createClient } from '@/lib/supabase/server'
+import { claimStaffInvite, resolveRole } from '@/lib/roles'
 
 export async function GET(request: Request) {
   const url = new URL(request.url)
@@ -15,7 +15,15 @@ export async function GET(request: Request) {
   if (error) return NextResponse.redirect(new URL('/sign-in?error=auth_callback', url.origin))
 
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user || !isOwnerEmail(user.email ?? '')) {
+  if (!user) {
+    await supabase.auth.signOut()
+    return NextResponse.redirect(new URL('/sign-in?error=owner_only', url.origin))
+  }
+
+  // Claim any pending staff invite for this email, then resolve the role.
+  await claimStaffInvite(user.id, user.email)
+  const role = await resolveRole(user.id, user.email)
+  if (!role.isAdmin) {
     await supabase.auth.signOut()
     return NextResponse.redirect(new URL('/sign-in?error=owner_only', url.origin))
   }

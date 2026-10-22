@@ -45,6 +45,12 @@ export function DossierFacts({ dossier }: { dossier: IpDossier }) {
     ['ISP', report.connection.isp ?? 'Unknown'],
     ['NETWORK DOMAIN', report.connection.domain ?? 'Unknown'],
     ['REVERSE DNS', report.reverseDns === null ? 'Lookup unavailable' : report.reverseDns.length ? report.reverseDns.join(', ') : 'No PTR record'],
+    ...(report.reputation ? [
+      ['ABUSE CONFIDENCE', report.reputation.abuseConfidenceScore !== null ? `${report.reputation.abuseConfidenceScore}%` : 'Not scored'],
+      ['ABUSE REPORTS', `${report.reputation.totalReports} from ${report.reputation.numDistinctUsers} reporters`],
+      ['LAST ABUSE REPORT', report.reputation.lastReportedAt ? new Date(report.reputation.lastReportedAt).toLocaleDateString() : 'None on record'],
+      ['REPORTED USAGE', report.reputation.usageType ?? 'Unknown'],
+    ] as [string, string][] : []),
     ['NETWORK AREA', place],
     ['POSTAL', report.location.postal ?? 'Unknown'],
     ['APPROX. COORDS', report.location.latitude !== null && report.location.longitude !== null ? `${report.location.latitude.toFixed(4)}, ${report.location.longitude.toFixed(4)}` : 'Unknown'],

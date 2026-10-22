@@ -16,6 +16,15 @@ export type IpDossierReport = {
   }
   connection: { asn: number | null; org: string | null; isp: string | null; domain: string | null }
   reverseDns: string[] | null
+  reputation: {
+    source: 'AbuseIPDB'
+    abuseConfidenceScore: number | null
+    totalReports: number
+    numDistinctUsers: number
+    lastReportedAt: string | null
+    usageType: string | null
+    isp: string | null
+  } | null
   history: { observedAt: string; city: string | null; country: string | null; org: string | null; asn: number | null }[]
   sources: string[]
   accuracyNote: string

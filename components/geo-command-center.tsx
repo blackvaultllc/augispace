@@ -30,6 +30,7 @@ import {
 import { DeviceRecovery, type PairedDevice } from '@/components/device-recovery'
 import { DossierActions, DossierFacts } from '@/components/ip-dossier-desk'
 import { TacticalRadarMap, type Beacon, type Coordinates } from '@/components/tactical-radar-map'
+import type { LiveThreatFeed } from '@/lib/live-threat-feed'
 import type { IpDossier } from '@/lib/ip-dossier'
 
 type CommandLog = { id: string; command: string; output: string; time: string }
@@ -56,9 +57,10 @@ type Props = {
   dossiers?: IpDossier[]
   focus?: { dossierId: string; nonce: number } | null
   onOpenDossier?: (id: string) => void
+  liveFeed?: LiveThreatFeed | null
 }
 
-export function GeoCommandCenter({ dossiers = [], focus = null, onOpenDossier }: Props) {
+export function GeoCommandCenter({ dossiers = [], focus = null, onOpenDossier, liveFeed = null }: Props) {
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null)
   const [radiusMiles, setRadiusMiles] = useState(100)
   const [view, setView] = useState<View>('global')
@@ -145,8 +147,19 @@ export function GeoCommandCenter({ dossiers = [], focus = null, onOpenDossier }:
         dossierId: dossier.id,
       })
     }
+    for (const contact of liveFeed?.beacons ?? []) {
+      list.push({
+        id: `feed-${contact.id}`,
+        kind: 'ip',
+        label: contact.label,
+        latitude: contact.latitude,
+        longitude: contact.longitude,
+        source: contact.source,
+        details: contact.details,
+      })
+    }
     return list
-  }, [coordinates, dossiers, devices])
+  }, [coordinates, dossiers, devices, liveFeed])
 
   const selectedBeacon = beacons.find((beacon) => beacon.id === selectedBeaconId) ?? null
   const selectedDossier = selectedBeacon?.dossierId ? dossiers.find((dossier) => dossier.id === selectedBeacon.dossierId) ?? null : null

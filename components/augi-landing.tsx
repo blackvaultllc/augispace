@@ -229,7 +229,7 @@ export function Plans() {
             <p className="plan-description">{plan.detail}</p>
             <div className="plan-price"><strong>{plan.price}</strong><span>/ month</span></div>
             <ul>{plan.features.map((feature) => <li key={feature}><Check aria-hidden="true" />{feature}</li>)}</ul>
-            <Link className={plan.featured ? 'plan-action plan-action-featured' : 'plan-action'} href={plan.name === 'Observer' ? '/demo' : '/sign-up'}>{plan.action}<ChevronRight aria-hidden="true" /></Link>
+            <PlanAction plan={plan} />
           </article>
         ))}
       </div>
@@ -242,7 +242,7 @@ export function SiteFooter() {
   return (
     <footer className="site-footer section-wrap">
       <div className="footer-main"><BrandMark /><p>Intelligence in service of people.<br />Built by Serpent Intelligence Systems.</p></div>
-      <div className="footer-links"><Link href="/approach">Our approach</Link><Link href="/demo">Try the demo</Link><Link href="/plans">Plans</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/acceptable-use">Acceptable use</Link></div>
+      <div className="footer-links"><Link href="/approach">Our approach</Link><Link href="/demo">Try the demo</Link><Link href="/plans">Plans</Link><Link href="/careers">Careers</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/acceptable-use">Acceptable use</Link></div>
       <div className="footer-bottom"><span>© 2026 SERPENT INTELLIGENCE SYSTEMS</span><span><span className="pulse-dot" /> PUBLIC SIGNALS · DEFENSIVE USE</span><Link href="/">BACK TO HOME <ArrowUpRight aria-hidden="true" /></Link></div>
     </footer>
   )
@@ -279,5 +279,54 @@ export function AugiLanding() {
         <SiteFooter />
       </div>
     </main>
+  )
+}
+
+function PlanAction({ plan }: { plan: (typeof plans)[number] }) {
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState('')
+
+  if (plan.name === 'Observer') {
+    return (
+      <Link className="plan-action" href="/demo">{plan.action}<ChevronRight aria-hidden="true" /></Link>
+    )
+  }
+
+  async function subscribe() {
+    setBusy(true)
+    setMessage('')
+    try {
+      const planKey = plan.name === 'Analyst' ? 'analyst' : 'command'
+      const response = await fetch('/api/billing/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: planKey }),
+      })
+      const payload = await response.json() as { url?: string; error?: string }
+      if (payload.url) {
+        window.location.href = payload.url
+        return
+      }
+      setMessage(payload.error || 'Billing is not ready yet.')
+    } catch {
+      setMessage('Billing could not be reached. Try again shortly.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <span className="plan-action-wrap">
+      <button
+        type="button"
+        className={plan.featured ? 'plan-action plan-action-featured' : 'plan-action'}
+        onClick={subscribe}
+        disabled={busy}
+      >
+        {busy ? 'OPENING CHECKOUT…' : plan.action}
+        <ChevronRight aria-hidden="true" />
+      </button>
+      {message && <small className="plan-action-note" role="alert">{message} <Link href="/sign-up">Create an account</Link> first if you are not signed in.</small>}
+    </span>
   )
 }

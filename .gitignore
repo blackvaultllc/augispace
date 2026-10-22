@@ -34,3 +34,5 @@ tsconfig.tsbuildinfo
 !.env.example
 .dev.vars
 .dev.vars.*
+
+augispace/
