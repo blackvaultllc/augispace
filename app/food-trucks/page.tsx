@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ShieldCheck, Truck, MapPin } from "lucide-react";
 import Link from "next/link";
-import { FoodTruckTracker } from "@/components/food-truck-tracker";
+import { FoodTruckTracker } from "@/components/food-truck-tracker-client";
 import { AugiPageShell } from "@/components/augi-page-shell";
 import { createClient } from "@/lib/supabase/server";
 import { getMediaAssets } from "@/lib/media";
