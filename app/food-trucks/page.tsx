@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ShieldCheck, Truck, MapPin } from "lucide-react";
+import Link from "next/link";
 import { FoodTruckTracker } from "@/components/food-truck-tracker";
 import { AugiPageShell } from "@/components/augi-page-shell";
 import { createClient } from "@/lib/supabase/server";
@@ -13,16 +14,22 @@ const rules = [
   {
     icon: Truck,
     title: "Licensed operators only",
+    href: "/food-trucks/licensed-operators",
+    image: "/augi-diverse-protection.png",
     body: 'Registering requires your real business license number and issuing state. Staff verify licenses before a listing earns the "license verified" badge.',
   },
   {
     icon: MapPin,
     title: "You control your location",
+    href: "/food-trucks/location",
+    image: "/augi-community-research.png",
     body: 'Update your live position whenever you open for service — with a place note like "5th & Main until 2pm" — and hide yourself with one tap when you close. The map shows only what you publish.',
   },
   {
     icon: ShieldCheck,
     title: "Community with guardrails",
+    href: "/food-trucks/community",
+    image: "/augi-protection-network.png",
     body: "Signed-in members can comment and react on your profile. Comments are tied to real accounts, and abuse of the community features is a reason to lose access.",
   },
 ];
@@ -93,14 +100,15 @@ export default async function FoodTrucksPage() {
         className="truck-rules section-wrap"
         aria-label="How the tracker works"
       >
-        {rules.map(({ icon: Icon, title, body }) => (
-          <article key={title}>
+        {rules.map(({ icon: Icon, title, body, href, image }) => (
+          <Link key={title} href={href} className="truck-rule-card"><img className="truck-rule-img" src={image} alt="" />
             <Icon aria-hidden="true" />
             <strong>{title}</strong>
-            <p>{body}</p>
-          </article>
+            <p>{body}</p><span className="truck-rule-more">Read the details &rarr;</span>
+          </Link>
         ))}
       </section>
+      <p className="section-wrap truck-members-link"><Link href="/food-trucks/membership">Rules for members and business accounts &rarr;</Link></p>
       <section className="section-wrap" aria-label="Live food truck map">
         <FoodTruckTracker signedIn={!!user} isOperator={!!user} />
       </section>
