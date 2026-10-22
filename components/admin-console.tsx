@@ -399,6 +399,7 @@ export function AdminConsole({ email, role }: Props) {
         <ShieldAlert aria-hidden="true" /> Staff members gain access the first
         time they sign up with their invited email address.
       </p>
+      <a className="admin-budget-link" href="/budget">Open the budgeting program (owner/staff) ↗</a>
     </section>
   );
 }
