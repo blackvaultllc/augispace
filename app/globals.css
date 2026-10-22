@@ -1695,3 +1695,143 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 .admin-migration-step { display: grid; place-items: center; width: 22px; height: 22px; flex-shrink: 0; border: 1px solid #35e0c4; color: #35e0c4; font-size: 10px; }
 .admin-migration-list code { color: #d9f5ef; font-size: 10px; display: block; }
 .admin-migration-list small { color: #7a8f98; font-size: 9px; }
+/* Desktop alignment for the public demo intelligence panels */
+.demo-intelligence-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
+  align-items: start;
+  gap: clamp(20px, 2.5vw, 36px);
+  width: 100%;
+  min-width: 0;
+}
+
+.demo-threat-panel,
+.demo-domain-panel {
+  min-width: 0;
+}
+
+.demo-threat-panel .live-threatmap {
+  margin-bottom: 0;
+  height: 100%;
+}
+
+.demo-domain-panel .demo-console {
+  width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 760px) {
+  .demo-intelligence-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+}
+
+/* ===== Food truck map: red radar overlay ===== */
+.truck-map-shell {
+  position: relative;
+  overflow: hidden;
+}
+
+.truck-radar-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 450;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.78;
+  background: radial-gradient(ellipse at center, rgba(255, 55, 65, 0.035), transparent 72%);
+}
+
+.truck-radar-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 75, 85, 0.25);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.truck-radar-ring-1 { width: 28%; }
+.truck-radar-ring-2 { width: 56%; }
+.truck-radar-ring-3 {
+  width: 88%;
+  border-color: rgba(255, 75, 85, 0.36);
+}
+
+.truck-radar-axis {
+  position: absolute;
+  background: rgba(255, 75, 85, 0.17);
+}
+
+.truck-radar-axis-h {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+
+.truck-radar-axis-v {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+}
+
+.truck-radar-sweep {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(88vw, 460px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 320deg,
+    rgba(255, 55, 65, 0.025) 340deg,
+    rgba(255, 55, 65, 0.12) 354deg,
+    rgba(255, 100, 105, 0.52) 359deg,
+    transparent 360deg
+  );
+  transform: translate(-50%, -50%);
+  animation: truck-radar-rotate 7s linear infinite;
+}
+
+@keyframes truck-radar-rotate {
+  from { rotate: 0deg; }
+  to { rotate: 360deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .truck-radar-sweep { animation: none; display: none; }
+}
+
+/* ===== Food truck map: desktop sizing refinement ===== */
+.truck-map-shell {
+  height: 460px;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.truck-map {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.truck-radar-overlay {
+  opacity: 0.42;
+}
+
+.truck-radar-sweep {
+  width: min(88%, 460px);
+}
+
+@media (max-width: 900px) {
+  .truck-map-shell {
+    height: 420px;
+  }
+}

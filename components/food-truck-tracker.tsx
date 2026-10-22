@@ -133,7 +133,7 @@ export function FoodTruckTracker({ signedIn, isOperator }: Props) {
         <div className="truck-layout">
           <div className="truck-map-shell">
             <MapContainer
-              center={[38.9, -77.036]}
+              center={[30.6954, -88.0399]}
               zoom={13}
               scrollWheelZoom
               className="truck-map"
@@ -150,8 +150,8 @@ export function FoodTruckTracker({ signedIn, isOperator }: Props) {
                     center={[truck.location.latitude, truck.location.longitude]}
                     radius={selectedId === truck.id ? 12 : 8}
                     pathOptions={{
-                      color: selectedId === truck.id ? "#ffd166" : "#35e0c4",
-                      fillColor: selectedId === truck.id ? "#ffd166" : "#35e0c4",
+                      color: selectedId === truck.id ? "#ff4545" : "#ff7777",
+                      fillColor: selectedId === truck.id ? "#ff4545" : "#ff7777",
                       fillOpacity: 0.85,
                       weight: 2,
                     }}
@@ -174,6 +174,14 @@ export function FoodTruckTracker({ signedIn, isOperator }: Props) {
                 />
               )}
             </MapContainer>
+            <div className="truck-radar-overlay" aria-hidden="true">
+              <span className="truck-radar-ring truck-radar-ring-1" />
+              <span className="truck-radar-ring truck-radar-ring-2" />
+              <span className="truck-radar-ring truck-radar-ring-3" />
+              <span className="truck-radar-axis truck-radar-axis-h" />
+              <span className="truck-radar-axis truck-radar-axis-v" />
+              <span className="truck-radar-sweep" />
+            </div>
           </div>
 
           <aside className="truck-list" aria-label="Food trucks">
@@ -321,3 +329,4 @@ export function FoodTruckTracker({ signedIn, isOperator }: Props) {
     </div>
   );
 }
+
