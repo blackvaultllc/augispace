@@ -2014,3 +2014,69 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 @media (prefers-reduced-motion: reduce) {
   .truck-map-shell .truck-radar-overlay::before { animation: none; opacity: 0; }
 }
+
+/* ===== Truck radar v4: smaller teal scope, fine ticks, easier to read ===== */
+.truck-map-shell .truck-radar-overlay { opacity: 1; background: none; }
+
+.truck-map-shell .truck-radar-ring {
+  border: 1px solid rgba(53, 224, 196, .55);
+  box-shadow: 0 0 10px rgba(53, 224, 196, .18), inset 0 0 14px rgba(53, 224, 196, .08);
+}
+.truck-map-shell .truck-radar-ring-1 { width: calc(min(62cqmin, 360px) / 3);     height: calc(min(62cqmin, 360px) / 3); }
+.truck-map-shell .truck-radar-ring-2 { width: calc(min(62cqmin, 360px) * 2 / 3); height: calc(min(62cqmin, 360px) * 2 / 3); }
+.truck-map-shell .truck-radar-ring-3 {
+  width: min(62cqmin, 360px); height: min(62cqmin, 360px);
+  border: 2px solid rgba(53, 224, 196, .85);
+  background: radial-gradient(circle, rgba(4, 24, 28, .10), rgba(4, 24, 28, .26));
+}
+/* Fine tick marks (mask fixed to the ring's own edge) */
+.truck-map-shell .truck-radar-ring-3::before {
+  background: repeating-conic-gradient(from -.4deg, rgba(190, 255, 242, .9) 0 .8deg, transparent .8deg 6deg);
+  -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 9px), #000 calc(100% - 8px));
+          mask: radial-gradient(closest-side, transparent calc(100% - 9px), #000 calc(100% - 8px));
+}
+
+/* Sweep: same size as the outer ring, bright leading edge */
+.truck-map-shell .truck-radar-sweep {
+  width: min(62cqmin, 360px); height: min(62cqmin, 360px);
+  background: conic-gradient(from 0deg,
+    transparent 0deg, transparent 296deg,
+    rgba(53, 224, 196, .10) 320deg,
+    rgba(53, 224, 196, .40) 354deg,
+    rgba(190, 255, 242, 1) 359.4deg,
+    transparent 360deg);
+}
+
+/* Axes only span the scope; N/E/S/W sit just outside the ring */
+.truck-map-shell .truck-radar-axis { background: rgba(53, 224, 196, .35); }
+.truck-map-shell .truck-radar-axis-h { left: 50%; right: auto; width: min(62cqmin, 360px); translate: -50% 0; }
+.truck-map-shell .truck-radar-axis-v { top: 50%; bottom: auto; height: min(62cqmin, 360px); translate: 0 -50%; }
+.truck-radar-axis::before, .truck-radar-axis::after {
+  color: #bffff2; font-size: 12px; font-weight: 700;
+  text-shadow: 0 0 3px #04181c, 0 0 7px #04181c;
+}
+.truck-radar-axis-v::before { top: -20px; }
+.truck-radar-axis-v::after  { bottom: -20px; }
+.truck-radar-axis-h::before { left: -20px; }
+.truck-radar-axis-h::after  { right: -20px; }
+
+/* Center dot: warm amber, the one food-colored accent */
+.truck-map-shell .truck-radar-overlay::after {
+  background: #ffb14d;
+  box-shadow: 0 0 0 3px rgba(255, 177, 77, .3), 0 0 16px #ffb14d;
+}
+.truck-map-shell .truck-radar-overlay::before {
+  width: min(62cqmin, 360px); height: min(62cqmin, 360px);
+  border-color: rgba(255, 177, 77, .6);
+}
+
+/* Bigger pins and zoom buttons for easier tapping */
+.truck-pin-dot, .truck-pin-ring { width: 20px; height: 20px; margin: -10px 0 0 -10px; }
+.truck-map .leaflet-control-zoom a { width: 40px; height: 40px; line-height: 40px; font-size: 22px; }
+
+/* Plain-language how-to line */
+.truck-howto {
+  margin: 0 0 12px; padding: 12px 14px;
+  border-left: 3px solid #35e0c4; background: rgba(53, 224, 196, .07);
+  color: #e6fbf6; font-size: 15px; line-height: 1.6;
+}

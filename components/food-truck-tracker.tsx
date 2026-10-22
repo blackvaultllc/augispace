@@ -130,6 +130,8 @@ export function FoodTruckTracker({ signedIn, isOperator }: Props) {
       )}
       {loading && <p className="truck-loading">Loading the tracker…</p>}
 
+      <p className="truck-howto"><strong>How to use:</strong> tap any glowing dot to see that truck's name, menu and where it is parked. Green dot = open now. Red dot = closed. Use the + and - buttons to zoom.</p>
+
       {!loading && (
         <div className="truck-layout">
           <div className="truck-map-shell">
