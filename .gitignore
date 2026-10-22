@@ -38,3 +38,6 @@ tsconfig.tsbuildinfo
 augispace/
 
 *.bak
+
+dev-server.log
+*.log
