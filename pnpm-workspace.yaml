@@ -1,5 +1,10 @@
 pmOnFail: ignore
 
+# OpenNext's copyTracedFiles re-creates pnpm symlinks via symlinkSync,
+# which fails with EPERM on Windows without Developer Mode/admin rights.
+# A hoisted (flat) node_modules avoids symlinks entirely.
+nodeLinker: hoisted
+
 minimumReleaseAgeExclude:
   - '@next/*'
   - next

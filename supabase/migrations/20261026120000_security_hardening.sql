@@ -48,6 +48,11 @@ create policy "admins moderate comments" on public.food_truck_comments
   for delete to authenticated
   using (public.is_app_admin() or author_id = auth.uid());
 
+-- 4b. Guard against duplicate triggers: recreate the verification-protection
+--    trigger exactly once (the live database previously accumulated a
+--    duplicate; drop-then-create makes this migration idempotent AND deduping).
+drop trigger if exists food_trucks_protect_verification on public.food_trucks;
+
 -- 5. Verification integrity: recreate the protection trigger (idempotent and
 --    always last so it reflects the final hardened definition).
 create or replace function public.food_trucks_protect_verification()

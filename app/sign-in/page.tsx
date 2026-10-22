@@ -16,6 +16,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
     // the server-resolved role — never by client-supplied metadata.
     await claimStaffInvite(user.id, user.email)
     const role = await resolveRole(user.id, user.email)
+    // Members route to the public site; staff/owner to the workspace.
     redirect(role.isAdmin ? '/workspace' : '/')
   }
 

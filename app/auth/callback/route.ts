@@ -26,18 +26,18 @@ export async function GET(request: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
     await supabase.auth.signOut().catch(() => undefined)
-    return NextResponse.redirect(new URL('/sign-in?error=owner_only', url.origin))
+    return NextResponse.redirect(new URL('/sign-in?error=auth_callback', url.origin))
   }
 
   // Claim any pending staff invite for this email, then resolve the role.
   await claimStaffInvite(user.id, user.email)
   const role = await resolveRole(user.id, user.email)
   if (!role.isAdmin) {
-    // Regular members keep no workspace session: only owner/staff enter the
-    // private workspace. Members can still use public member features after a
-    // normal password sign-in (see below); the callback only handles links.
-    await supabase.auth.signOut().catch(() => undefined)
-    return NextResponse.redirect(new URL('/sign-in?error=owner_only', url.origin))
+    // Members keep their session for member features (food-truck comments,
+    // community pages) but are routed to the public site instead of the
+    // owner/staff workspace. Workspace pages re-verify server-side, so this
+    // redirect is convenience, not the authorization boundary.
+    return NextResponse.redirect(new URL('/', url.origin))
   }
 
   const destination = next?.startsWith('/workspace') || next?.startsWith('/admin') ? next : '/workspace'

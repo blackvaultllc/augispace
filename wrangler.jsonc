@@ -1,30 +1,43 @@
+
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "ip-intelligence-terminal-design-xf",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-10-12",
-  // nodejs_compat is required: the API routes use Node APIs (pg, Better Auth, Stripe).
-  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  // nodejs_compat is required for Node APIs used by the application.
+  "compatibility_flags": [
+    "nodejs_compat",
+    "global_fetch_strictly_public"
+  ],
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
   "services": [
     {
-      // OpenNext calls the worker itself for ISR/revalidation; the service name must equal "name" above.
+      // OpenNext uses this service for ISR and revalidation.
       "binding": "WORKER_SELF_REFERENCE",
       "service": "ip-intelligence-terminal-design-xf"
+    }
+  ],
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "6c27d424333545dcbd9d122224c409a3"
     }
   ],
   "observability": {
     "enabled": true
   },
   "routes": [
-    { "pattern": "augi.space", "custom_domain": true }
+    {
+      "pattern": "augi.space",
+      "custom_domain": true
+    }
   ],
   "workers_dev": false,
   "preview_urls": false,
-  // Keeps variables set in the dashboard from being wiped on deploy
+  // Preserve variables configured in the Cloudflare dashboard.
   "keep_vars": true,
   "vars": {
     "BETTER_AUTH_URL": "https://augi.space",
