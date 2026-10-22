@@ -67,3 +67,14 @@ export const investigations = pgTable('augi_investigation', {
   report: jsonb('report').notNull(),
   createdAt: timestamp('createdAt', { withTimezone: true }).notNull().defaultNow(),
 })
+
+/**
+ * Processed Stripe webhook event IDs (idempotency).
+ * Stripe retries deliveries; without this table, duplicate events re-apply
+ * the same state change. A unique primary key makes replays a no-op.
+ */
+export const processedWebhookEvents = pgTable('processed_webhook_event', {
+  id: text('id').primaryKey(), // Stripe event id, e.g. evt_...
+  type: text('type').notNull(),
+  receivedAt: timestamp('received_at', { withTimezone: true }).notNull().defaultNow(),
+})
