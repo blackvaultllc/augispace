@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "test": "tsx tests/auth-callback.test.mts && tsx tests/roles.test.mjs && tsx tests/integrations.test.mts && tsx tests/awards.test.mts && tsx tests/office.test.mts",
+    "test": "tsx tests/auth-callback.test.mts && tsx tests/roles.test.mjs && tsx tests/integrations.test.mts && tsx tests/awards.test.mts && tsx tests/office.test.mts && tsx tests/pulse.test.mts",
     "start": "next start",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
@@ -45,6 +45,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "postcss": "^8.5",
+    "supabase": "^2.121.0",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
     "typescript": "5.7.3",
