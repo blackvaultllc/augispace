@@ -18,6 +18,11 @@ const LICENSE_PATTERN = /^[A-Za-z0-9][A-Za-z0-9\-/ ]{2,40}$/
 
 type LocationRow = { latitude: number; longitude: number; place_note: string | null; active: boolean; updated_at: string }
 type CommentRow = { id: string; body: string; emoji: string | null; created_at: string }
+// PostgREST returns one object (not an array) when the related table is one-to-one.
+function firstLocation(value: unknown): LocationRow | null {
+  if (Array.isArray(value)) return (value[0] as LocationRow | undefined) ?? null
+  return (value as LocationRow | null) ?? null
+}
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient()
@@ -31,9 +36,9 @@ export async function GET(request: NextRequest) {
   if (error) return jsonError('The food truck tracker is temporarily unavailable.', 502)
 
   const trucks = (data ?? [])
-    .filter((row) => !activeOnly || (row.food_truck_locations as LocationRow[] | null)?.[0]?.active)
+    .filter((row) => !activeOnly || firstLocation(row.food_truck_locations)?.active)
     .map((row) => {
-      const location = (row.food_truck_locations as LocationRow[] | null)?.[0] ?? null
+      const location = firstLocation(row.food_truck_locations) ?? null
       return {
         id: row.id,
         businessName: row.business_name,

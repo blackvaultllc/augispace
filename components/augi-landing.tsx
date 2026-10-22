@@ -81,7 +81,7 @@ function BrandMark() {
   return (
     <Link className="augi-brand" href="/" aria-label="AUGI home">
       <span className="augi-brand-mark"><Image src="/augi-serpent-mark.png" alt="" width={40} height={40} priority /></span>
-      <span className="augi-brand-name">AUGI<span> / SERPENT INTELLIGENCE</span></span>
+      <span className="augi-brand-name">AUGI</span>
     </Link>
   )
 }
@@ -327,9 +327,9 @@ export function Plans() {
 export function SiteFooter() {
   return (
     <footer className="site-footer section-wrap">
-      <div className="footer-main"><BrandMark /><p>Intelligence in service of people.<br />Built by Serpent Intelligence Systems.</p></div>
+      <div className="footer-main"><BrandMark /><p>Intelligence in service of people.</p></div>
       <div className="footer-links"><Link href="/approach">Our approach</Link><Link href="/demo">Try the demo</Link><Link href="/food-trucks">Food truck tracker</Link><Link href="/compliance">Compliance</Link><Link href="/plans">Plans</Link><Link href="/careers">Careers</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/acceptable-use">Acceptable use</Link></div>
-      <div className="footer-bottom"><span>© 2026 SERPENT INTELLIGENCE SYSTEMS</span><span><span className="pulse-dot" /> PUBLIC SIGNALS · DEFENSIVE USE</span><Link href="/">BACK TO HOME <ArrowUpRight aria-hidden="true" /></Link></div>
+      <div className="footer-bottom"><span>© 2026 AUGI</span><span><span className="pulse-dot" /> PUBLIC SIGNALS · DEFENSIVE USE</span><Link href="/">BACK TO HOME <ArrowUpRight aria-hidden="true" /></Link></div>
     </footer>
   )
 }

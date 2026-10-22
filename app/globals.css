@@ -1,4 +1,4 @@
-﻿@import 'tailwindcss';
+@import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
@@ -1016,7 +1016,7 @@ a { color: inherit; }
 .radar-axis { position:absolute; background:rgba(53,224,196,.14); }
 .radar-axis-h { top:50%; right:0; left:0; height:1px; }
 .radar-axis-v { top:0; bottom:0; left:50%; width:1px; }
-.radar-scope .radar-sweep { position:absolute; inset:auto; top:50%; left:50%; width:125%; aspect-ratio:1; border-radius:50%; animation:none; background:conic-gradient(from -70deg,rgba(53,224,196,0) 0deg,rgba(53,224,196,.05) 40deg,rgba(53,224,196,.26) 69deg,rgba(240,200,110,.7) 70deg,rgba(53,224,196,0) 70.6deg 360deg); transform:translate(-50%,-50%); will-change:transform; }
+.radar-scope .radar-sweep { position:absolute; inset:auto; top:50%; left:50%; width:auto; height:100%; aspect-ratio:1; border-radius:50%; animation:none; background:conic-gradient(from -70deg,rgba(53,224,196,0) 0deg,rgba(53,224,196,.05) 40deg,rgba(53,224,196,.26) 69deg,rgba(240,200,110,.7) 70deg,rgba(53,224,196,0) 70.6deg 360deg); transform:translate(-50%,-50%); will-change:transform; }
 .radar-bearing { position:absolute; color:#6f6244; font:6px var(--mono); letter-spacing:.12em; }
 .radar-bearing-n { top:6px; left:50%; transform:translateX(-50%); }
 .radar-bearing-e { top:50%; right:8px; transform:translateY(-50%); }
@@ -1835,3 +1835,46 @@ html, body { overflow-x: hidden; max-width: 100vw; }
     height: 420px;
   }
 }
+
+/* ===== Truck radar: centered sweep + sonar pins ===== */
+.truck-radar-ring { width: auto; aspect-ratio: 1; }
+.truck-radar-ring-1 { height: 30%; }
+.truck-radar-ring-2 { height: 58%; }
+.truck-radar-ring-3 { height: 88%; }
+.truck-radar-sweep {
+  top: 50%;
+  left: 50%;
+  width: auto;
+  height: 88%;
+  aspect-ratio: 1;
+  transform: none;
+  translate: -50% -50%;
+  rotate: 0deg;
+  animation: none;
+  will-change: rotate;
+}
+.truck-pin { --pin: #ffd166; --glow: 1; background: none; border: 0; cursor: pointer; }
+.truck-pin-open { --pin: #2dff7a; }
+.truck-pin-closed { --pin: #ff4545; }
+.truck-pin-pending { --pin: #ffd166; }
+.truck-pin-dot, .truck-pin-ring {
+  position: absolute; left: 50%; top: 50%;
+  width: 14px; height: 14px; margin: -7px 0 0 -7px;
+  border-radius: 50%; box-sizing: border-box;
+}
+.truck-pin-dot {
+  background: var(--pin);
+  border: 2px solid rgba(0, 0, 0, .45);
+  box-shadow: 0 0 10px var(--pin);
+  opacity: calc(.3 + var(--glow) * .7);
+}
+.truck-pin-ring { border: 2px solid var(--pin); opacity: 0; pointer-events: none; }
+.truck-pin.is-selected .truck-pin-dot { width: 20px; height: 20px; margin: -10px 0 0 -10px; }
+.truck-pin.is-pinging .truck-pin-ring { animation: truck-ping 1.2s ease-out; }
+.truck-pin.is-pinging .truck-pin-dot { animation: truck-blink .45s ease-in-out 3; }
+@keyframes truck-ping { from { transform: scale(1); opacity: .9; } to { transform: scale(3.8); opacity: 0; } }
+@keyframes truck-blink { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(2.4); } }
+/* radar visibility + larger header picture */
+.truck-radar-overlay { opacity: .7; }
+.truck-radar-overlay::after { content: ""; position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: #ff4b55; box-shadow: 0 0 12px #ff4b55; }
+.truck-live-thumb { width: 160px; height: 96px; }

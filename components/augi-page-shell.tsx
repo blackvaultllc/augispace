@@ -21,12 +21,12 @@ export function AugiPageShell({
         <SiteHeader />
         <section className="inner-hero section-wrap" aria-labelledby="inner-title">
           <div className="inner-hero-copy">
-            <div className="section-label"><span>{eyebrow}</span><span className="section-label-line" /><span>PROTECTED BY SERPENT</span></div>
+            <div className="section-label"><span>{eyebrow}</span><span className="section-label-line" /></div>
             <h1 id="inner-title">{title}</h1>
             <p>{description}</p>
             <div className="inner-hero-proof"><LockKeyhole aria-hidden="true" /><span>Public signals only. Encrypted in transit. Built for defensive use.</span></div>
           </div>
-          <div className="inner-hero-index" aria-hidden="true"><span>AUGI</span><strong>01</strong><span>SERPENT INTELLIGENCE SYSTEMS</span></div>
+          <div className="inner-hero-index" aria-hidden="true"><span>AUGI</span><strong>01</strong></div>
         </section>
         <div className="inner-divider" />
         {children}

@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Service availability — AUGI" };
 export default function UnavailableRegionPage() {
   return (
     <main className="region-page">
-      <Link className="region-brand" href="/" aria-label="AUGI home">AUGI<span> / SERPENT INTELLIGENCE</span></Link>
+      <Link className="region-brand" href="/" aria-label="AUGI home">AUGI</Link>
       <section className="region-panel" aria-labelledby="region-title">
         <MapPin aria-hidden="true" />
         <h1 id="region-title">AUGI is available in the United States.</h1>
