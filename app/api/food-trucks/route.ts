@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
   const { data, error } = await supabase
     .from('food_trucks')
     .select('id, business_name, cuisine, description, truck_photo_url, menu_photo_url, verified, food_truck_locations(latitude, longitude, place_note, active, updated_at), food_truck_comments(id, body, emoji, created_at)')
+    .eq('verified', true)
     .order('business_name')
 
   if (error) return jsonError('The food truck tracker is temporarily unavailable.', 502)
@@ -98,7 +99,7 @@ export async function POST(request: NextRequest) {
       truck: { id: truck.id, businessName: truck.business_name, verified: truck.verified },
       message: truck.verified
         ? 'Profile saved. Your listing is verified.'
-        : 'Profile saved. Staff verify business licenses before a listing is marked verified — your listing is visible meanwhile.',
+        : 'Profile saved. Staff verify business licenses first. Your listing appears on the map once you are approved.',
     })
   }
 

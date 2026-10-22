@@ -47,14 +47,14 @@ export function FoodTruckTracker({ signedIn, isOperator }: Props) {
       if (!response.ok || payload.error) {
         // API or database not ready yet — fall back to the demo fleet so the
         // public always sees how the tracker works.
-        setTrucks([]);
+        setTrucks(DEMO_TRUCKS);
         setLiveUnavailable(true);
         setLoading(false);
         return;
       }
       const fetched = payload.trucks ?? [];
       if (!fetched.length) {
-        setTrucks([]);
+        setTrucks(DEMO_TRUCKS);
         setLiveUnavailable(true);
       } else {
         setTrucks(fetched);
@@ -62,7 +62,7 @@ export function FoodTruckTracker({ signedIn, isOperator }: Props) {
       }
       setError("");
     } catch {
-      setTrucks([]);
+      setTrucks(DEMO_TRUCKS);
       setLiveUnavailable(true);
     } finally {
       setLoading(false);

@@ -42,7 +42,35 @@ do $$
 begin
   alter table public.food_truck_comments
     add constraint food_truck_comments_body_len
-    check (char_length(body) between 1 and 1000);
+    check (char_length(body) between 0 and 1000);
 exception when duplicate_object then null;
+end;
+$$;
+-- Editing license or business name sends a truck back to review.
+create or replace function public.food_trucks_protect_verification()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  if coalesce(auth.role(), '') = 'service_role'
+     or current_user in ('postgres', 'supabase_admin', 'service_role') then
+    return new;
+  end if;
+  if tg_op = 'INSERT' then
+    new.verified := false;
+    new.verified_by := null;
+  else
+    if new.license_number is distinct from old.license_number
+       or new.license_state is distinct from old.license_state
+       or new.business_name is distinct from old.business_name then
+      new.verified := false;
+      new.verified_by := null;
+    else
+      new.verified := old.verified;
+      new.verified_by := old.verified_by;
+    end if;
+  end if;
+  return new;
 end;
 $$;
