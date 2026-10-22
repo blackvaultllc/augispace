@@ -23,7 +23,7 @@
     "drizzle-orm": "^0.45.4",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.16.0",
-    "next": "16.4.0",
+    "next": "^16.4.2",
     "pg": "^8.23.1",
     "pg-cloudflare": "^1.4.1",
     "react": "^19",
