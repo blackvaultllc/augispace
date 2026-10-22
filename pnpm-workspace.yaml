@@ -11,4 +11,5 @@ minimumReleaseAgeExclude:
 
 allowBuilds:
   esbuild: true
+  supabase: true
   workerd: true

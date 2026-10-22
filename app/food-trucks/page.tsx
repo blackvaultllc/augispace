@@ -5,6 +5,7 @@ import { FoodTruckTracker } from "@/components/food-truck-tracker-client";
 import { AugiPageShell } from "@/components/augi-page-shell";
 import { createClient } from "@/lib/supabase/server";
 import { getMediaAssets } from "@/lib/media";
+import { getActiveHoliday } from "@/lib/holidays";
 
 export const metadata: Metadata = {
   title: "Food Truck Tracker — find local trucks live",
@@ -40,6 +41,9 @@ export default async function FoodTrucksPage() {
     data: { user },
   } = await supabase.auth.getUser();
   const media = await getMediaAssets(["truck_hero_video", "truck_hero_image"]);
+  // Seasonal theme: active only inside the 30-day prepare window; presentation
+  // layer only — location/vendor data is untouched.
+  const activeHoliday = await getActiveHoliday().catch(() => null);
   const heroVideo = media.truck_hero_video?.url ?? "/videos/food-truck.mp4";
   const heroPoster = media.truck_hero_image?.url ?? "/augi-public-signal.png";
   const hasVideo = !!media.truck_hero_video;
@@ -110,7 +114,12 @@ export default async function FoodTrucksPage() {
       </section>
       <p className="section-wrap truck-members-link"><Link href="/food-trucks/membership">Rules for members and business accounts &rarr;</Link></p>
       <section className="section-wrap" aria-label="Live food truck map">
-        <FoodTruckTracker signedIn={!!user} isOperator={!!user} />
+        <FoodTruckTracker
+          signedIn={!!user}
+          isOperator={!!user}
+          seasonal={activeHoliday?.theme.radar_marker as never}
+          holidayBanner={activeHoliday ? { emoji: activeHoliday.theme.banner_emoji, copy: activeHoliday.theme.page_copy, name: activeHoliday.holiday.name, daysUntil: activeHoliday.holiday.days_until } : null}
+        />
       </section>
       <section
         className="section-wrap truck-register-cta"

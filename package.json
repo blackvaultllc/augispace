@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "test": "tsx tests/auth-callback.test.mts && tsx tests/roles.test.mjs && tsx tests/integrations.test.mts && tsx tests/awards.test.mts && tsx tests/office.test.mts && tsx tests/pulse.test.mts",
+    "test": "tsx tests/auth-callback.test.mts && tsx tests/roles.test.mjs && tsx tests/integrations.test.mts && tsx tests/awards.test.mts && tsx tests/office.test.mts && tsx tests/pulse.test.mts && tsx tests/holidays.test.mts",
     "start": "next start",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"

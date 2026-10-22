@@ -7,6 +7,29 @@ import type { Truck } from "@/lib/food-truck-types";
 
 type PinStatus = "open" | "closed" | "pending";
 
+/** Seasonal marker shapes (driven by the active holiday theme, admin-configured). */
+export type SeasonalMarker =
+  | "default"
+  | "pumpkin"
+  | "snowflake"
+  | "heart"
+  | "firework"
+  | "star"
+  | "leaf"
+  | "clover"
+  | "flag";
+
+const MARKER_GLYPH: Record<Exclude<SeasonalMarker, "default">, string> = {
+  pumpkin: "🎃",
+  snowflake: "❄",
+  heart: "♥",
+  firework: "✦",
+  star: "★",
+  leaf: "🍂",
+  clover: "☘",
+  flag: "⚑",
+};
+
 const PERIOD_MS = 7000;
 
 const STATUS_LABEL: Record<PinStatus, string> = {
@@ -22,13 +45,14 @@ function statusOf(truck: Truck): PinStatus {
 
 const iconCache = new Map<string, DivIcon>();
 
-function pinIcon(status: PinStatus, selected: boolean): DivIcon {
-  const key = `${status}-${selected}`;
+function pinIcon(status: PinStatus, selected: boolean, seasonal: SeasonalMarker = "default"): DivIcon {
+  const key = `${status}-${selected}-${seasonal}`;
   let icon = iconCache.get(key);
   if (!icon) {
+    const glyph = seasonal !== "default" ? MARKER_GLYPH[seasonal] : null;
     icon = divIcon({
-      className: `truck-pin truck-pin-${status}${selected ? " is-selected" : ""}`,
-      html: '<span class="truck-pin-ring"></span><span class="truck-pin-dot"></span>',
+      className: `truck-pin truck-pin-${status}${selected ? " is-selected" : ""}${glyph ? " is-seasonal" : ""}`,
+      html: `<span class="truck-pin-ring"></span><span class="truck-pin-dot"></span>${glyph ? `<span class="truck-pin-glyph" aria-hidden="true">${glyph}</span>` : ""}`,
       iconSize: [28, 28],
       iconAnchor: [14, 14],
       popupAnchor: [0, -14],
@@ -42,9 +66,10 @@ type Props = {
   trucks: Truck[];
   selectedId: string | null;
   onSelect: (id: string) => void;
+  seasonal?: SeasonalMarker;
 };
 
-export function TruckPins({ trucks, selectedId, onSelect }: Props) {
+export function TruckPins({ trucks, selectedId, onSelect, seasonal = "default" }: Props) {
   const map = useMap();
   const markers = useRef(new Map<string, LeafletMarker>());
   const latest = useRef(trucks);
@@ -109,7 +134,7 @@ export function TruckPins({ trucks, selectedId, onSelect }: Props) {
           <Marker
             key={truck.id}
             position={[truck.location.latitude, truck.location.longitude]}
-            icon={pinIcon(status, selectedId === truck.id)}
+            icon={pinIcon(status, selectedId === truck.id, seasonal)}
             ref={(marker) => {
               if (marker) markers.current.set(truck.id, marker);
               else markers.current.delete(truck.id);

@@ -17,11 +17,18 @@ import "leaflet/dist/leaflet.css";
 import { latLngBounds } from "leaflet";
 import type { Truck } from "@/lib/food-truck-types";
 import { DEMO_TRUCKS, isDemoTruck } from "@/lib/food-truck-demo";
-import { TruckPins } from "@/components/truck-radar-layer";
+import { TruckPins, type SeasonalMarker } from "@/components/truck-radar-layer";
 
 type TruckComment = Truck["comments"][number];
 
-type Props = { signedIn: boolean; isOperator: boolean };
+type Props = {
+  signedIn: boolean;
+  isOperator: boolean;
+  /** Seasonal marker from the active holiday theme (presentation only). */
+  seasonal?: string;
+  /** Holiday banner shown above the map inside the 30-day window. */
+  holidayBanner?: { emoji: string; copy: string; name: string; daysUntil: number } | null;
+};
 
 /** Recenters the map when a truck is selected from the list. */
 function FlyTo({ latitude, longitude }: { latitude: number; longitude: number }) {
@@ -54,7 +61,7 @@ function UsLock() {
   return null;
 }
 
-export function FoodTruckTracker({ signedIn, isOperator }: Props) {
+export function FoodTruckTracker({ signedIn, isOperator, seasonal = "default", holidayBanner = null }: Props) {
   const [trucks, setTrucks] = useState<Truck[]>([]);
   const [liveUnavailable, setLiveUnavailable] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -129,6 +136,18 @@ export function FoodTruckTracker({ signedIn, isOperator }: Props) {
 
   return (
     <div className="truck-tracker" aria-live="polite">
+      {holidayBanner && (
+        <p className="truck-holiday-banner" role="status">
+          <span aria-hidden="true">{holidayBanner.emoji}</span>
+          <strong>{holidayBanner.name}</strong>
+          <span>
+            {holidayBanner.daysUntil === 0
+              ? "Today!"
+              : `in ${holidayBanner.daysUntil} day${holidayBanner.daysUntil === 1 ? "" : "s"}`}
+          </span>
+          {holidayBanner.copy && <span className="truck-holiday-copy">{holidayBanner.copy}</span>}
+        </p>
+      )}
       <div className="truck-tracker-head">
         <span className="truck-live">
           <Radio aria-hidden="true" /> {active.length} TRUCK{active.length === 1 ? "" : "S"} ON THE MAP
@@ -172,7 +191,7 @@ export function FoodTruckTracker({ signedIn, isOperator }: Props) {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
               <UsLock />
-              <TruckPins trucks={trucks.filter((truck) => truck.location)} selectedId={selectedId} onSelect={setSelectedId} />
+              <TruckPins trucks={trucks.filter((truck) => truck.location)} selectedId={selectedId} onSelect={setSelectedId} seasonal={seasonal as SeasonalMarker | undefined} />
               {selected?.location?.active && (
                 <FlyTo
                   latitude={selected.location.latitude}

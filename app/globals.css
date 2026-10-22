@@ -2322,3 +2322,29 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 .pulse-article-note { margin: 0; padding: 10px 14px; border-left: 3px solid var(--line-bright); color: var(--muted-text); font-size: 12.5px; }
 @media (max-width: 900px) { .pulse-editor-layout { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .pulse-dashboard *, .pulse-editor *, .pulse-article * { transition: none !important; animation: none !important; } }
+
+/* ---- Holiday calendar & seasonal radar --------------------------------- */
+.truck-holiday-banner { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin: 0 0 12px; padding: 10px 14px; border: 1px solid var(--line-bright); border-radius: 10px; background: linear-gradient(90deg, rgba(255,154,60,.10), rgba(140,232,220,.05)); color: var(--soft-text); font-size: 13px; }
+.truck-holiday-banner strong { color: var(--foreground); }
+.truck-holiday-banner span:first-child { font-size: 17px; }
+.truck-holiday-copy { width: 100%; color: var(--muted-text); font-size: 12.5px; }
+.truck-pin-glyph { position: absolute; inset: 0; display: grid; place-items: center; font-size: 15px; line-height: 1; filter: drop-shadow(0 0 5px rgba(0,0,0,.55)); }
+.truck-pin.is-seasonal .truck-pin-dot { opacity: .25; }
+.truck-pin.is-seasonal .truck-pin-ring { border-color: rgba(255, 154, 60, .45); }
+.holiday-featured { display: grid; gap: 16px; }
+.holiday-featured-head { display: flex; gap: 14px; align-items: start; }
+.holiday-emoji { font-size: 34px; line-height: 1; filter: drop-shadow(0 0 10px rgba(255,154,60,.35)); }
+.holiday-featured-head h2 { margin: 4px 0 0; font-size: 24px; }
+.holiday-countdown { color: var(--cyan); font-family: var(--mono); font-size: 15px; }
+.holiday-featured-head p { margin: 6px 0 0; color: var(--soft-text); font-size: 14px; max-width: 640px; }
+.holiday-featured-content { padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--soft-text); font-size: 14px; line-height: 1.65; }
+.holiday-map-note { display: flex; gap: 7px; align-items: center; margin: 0; color: var(--muted-text); font-size: 12px; }
+.holiday-list { display: grid; gap: 12px; }
+.holiday-list-inner { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.holiday-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.holiday-row strong { min-width: 200px; }
+.holiday-date, .holiday-when { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; color: var(--muted-text); }
+.holiday-active-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; background: rgba(140,232,220,.1); color: var(--cyan); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.holiday-row small { margin-left: auto; color: var(--muted-text); font-size: 11px; }
+.holiday-note { margin: 0; color: var(--muted-text); font-size: 12.5px; }
+@media (prefers-reduced-motion: reduce) { .holiday-emoji { filter: none; } }
