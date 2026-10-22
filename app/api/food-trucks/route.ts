@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { resolveRole } from '@/lib/roles'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -132,11 +133,32 @@ export async function POST(request: NextRequest) {
     const text = typeof body.body === 'string' ? body.body.trim().slice(0, 400) : ''
     const emoji = typeof body.emoji === 'string' && body.emoji.length <= 4 ? body.emoji : null
     if (!truckId || (!text && !emoji)) return jsonError('A comment or emoji is required.', 400)
+    // Strip control characters (except tab/newline/CR) server-side so raw
+    // control bytes can never be stored, even from a hand-crafted request.
+    const cleanText = text.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '').trim()
+    if (!cleanText && !emoji) return jsonError('The comment has no usable content.', 400)
     const { data: exists } = await supabase.from('food_trucks').select('id').eq('id', truckId).maybeSingle()
     if (!exists) return jsonError('That truck does not exist.', 404)
 
-    const { error } = await supabase.from('food_truck_comments').insert({ truck_id: truckId, author_id: user.id, body: text, emoji })
+    const { error } = await supabase.from('food_truck_comments').insert({ truck_id: truckId, author_id: user.id, body: cleanText, emoji })
     if (error) return jsonError('The comment could not be posted.', 500)
+    return NextResponse.json({ ok: true })
+  }
+
+  if (body.action === 'delete_comment') {
+    const commentId = typeof body.commentId === 'string' ? body.commentId : ''
+    if (!commentId) return jsonError('Comment id is required.', 400)
+    // RLS decides: authors may delete their own comment, staff/owner may
+    // moderate any comment. Double-check with the role registry server-side.
+    const { data: comment } = await supabase
+      .from('food_truck_comments').select('author_id').eq('id', commentId).maybeSingle()
+    if (!comment) return jsonError('That comment does not exist.', 404)
+    const role = await resolveRole(user.id, user.email)
+    if (comment.author_id !== user.id && !role.isAdmin) {
+      return jsonError('You can only delete your own comment.', 403)
+    }
+    const { error } = await supabase.from('food_truck_comments').delete().eq('id', commentId)
+    if (error) return jsonError('The comment could not be deleted.', 500)
     return NextResponse.json({ ok: true })
   }
 

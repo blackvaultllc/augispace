@@ -2,6 +2,15 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { claimStaffInvite, resolveRole } from '@/lib/roles'
 
+export const dynamic = 'force-dynamic'
+
+/**
+ * Email-confirmation / OAuth callback.
+ *
+ * Failures are always surfaced as redirects with an error code, never as an
+ * HTTP 500. Roles are resolved server-side; the database registry is consulted
+ * but a registry outage fails closed (see resolveRole), it never elevates.
+ */
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const code = url.searchParams.get('code')
@@ -16,7 +25,7 @@ export async function GET(request: Request) {
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
-    await supabase.auth.signOut()
+    await supabase.auth.signOut().catch(() => undefined)
     return NextResponse.redirect(new URL('/sign-in?error=owner_only', url.origin))
   }
 
@@ -24,7 +33,10 @@ export async function GET(request: Request) {
   await claimStaffInvite(user.id, user.email)
   const role = await resolveRole(user.id, user.email)
   if (!role.isAdmin) {
-    await supabase.auth.signOut()
+    // Regular members keep no workspace session: only owner/staff enter the
+    // private workspace. Members can still use public member features after a
+    // normal password sign-in (see below); the callback only handles links.
+    await supabase.auth.signOut().catch(() => undefined)
     return NextResponse.redirect(new URL('/sign-in?error=owner_only', url.origin))
   }
 

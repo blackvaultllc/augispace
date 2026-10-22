@@ -1,17 +1,23 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { AuthForm } from '@/components/auth-form'
-import { isOwnerEmail } from '@/lib/plans'
+import { claimStaffInvite, resolveRole } from '@/lib/roles'
 import { createClient } from '@/lib/supabase/server'
 
-export const metadata: Metadata = { title: 'Owner sign in' }
+export const metadata: Metadata = { title: 'AUGI sign in' }
 
 type SearchParams = Promise<{ created?: string; error?: string; next?: string }>
 
 export default async function SignInPage({ searchParams }: { searchParams: SearchParams }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (user && isOwnerEmail(user.email ?? '')) redirect('/workspace')
+  if (user) {
+    // Claim a pending staff invite on every sign-in (idempotent), then route by
+    // the server-resolved role — never by client-supplied metadata.
+    await claimStaffInvite(user.id, user.email)
+    const role = await resolveRole(user.id, user.email)
+    redirect(role.isAdmin ? '/workspace' : '/')
+  }
 
   const params = await searchParams
   const notice = params.created === '1'
