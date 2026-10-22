@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ArrowRight, ArrowUpRight, LockKeyhole } from 'lucide-react'
 import { SiteFooter, SiteHeader } from '@/components/augi-landing'
+import { ShareButton } from '@/components/share-button'
 
 export function AugiPageShell({
   eyebrow,
@@ -25,6 +26,7 @@ export function AugiPageShell({
             <h1 id="inner-title">{title}</h1>
             <p>{description}</p>
             <div className="inner-hero-proof"><LockKeyhole aria-hidden="true" /><span>Public signals only. Encrypted in transit. Built for defensive use.</span></div>
+            <div style={{ marginTop: 16 }}><ShareButton /></div>
           </div>
           <div className="inner-hero-index" aria-hidden="true"><span>AUGI</span><strong>01</strong></div>
         </section>
