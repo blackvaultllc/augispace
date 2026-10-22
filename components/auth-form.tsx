@@ -77,7 +77,7 @@ export function AuthForm({ mode, notice, nextPath = '/workspace' }: { mode: 'sig
         <div className="auth-brand-mark" aria-hidden="true"><Fingerprint /></div>
         <p className="auth-eyebrow">AUGI / OWNER ACCESS</p>
         <h1 id="auth-title">{isSignUp ? 'A clearer picture starts here.' : 'Welcome back.'}</h1>
-        <p className="auth-description">{isSignUp ? 'Register the configured owner email to save domain investigations and return to the private security workspace.' : 'Sign in with the configured owner account to return to saved investigations and the private security workspace.'}</p>
+        <p className="auth-description">{isSignUp ? 'Create your free AUGI account. Members can use the community tools — like the food truck tracker — and, for the configured owner account, the private security workspace.' : 'Sign in to return to your saved work and the AUGI tools included with your access level.'}</p>
         {notice && <p className="auth-description" role="status">{notice}</p>}
 
         {(
@@ -114,7 +114,7 @@ export function AuthForm({ mode, notice, nextPath = '/workspace' }: { mode: 'sig
           </button>
         </form>
 
-        <p className="auth-switch">{isSignUp ? 'Already have an account?' : "Don't have an account yet?"} <Link href={isSignUp ? '/sign-in' : '/sign-up'}>{isSignUp ? 'Sign in' : 'Create one'}</Link></p>
+        <p className="auth-switch">{isSignUp ? 'Already have an account?' : "Don't have an account yet?"} <Link href={isSignUp ? '/sign-in' : '/sign-up'}>{isSignUp ? 'Sign in' : 'Create one'}</Link>{!isSignUp && <> · <Link href="/reset-password">Forgot password?</Link></>}</p>
         <p className="auth-privacy"><LockKeyhole aria-hidden="true" />Authentication is provided by Supabase. Email confirmation may be required.</p>
       </section>
     </main>

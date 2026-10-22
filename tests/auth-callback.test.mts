@@ -17,8 +17,11 @@ process.env.DATABASE_URL = ""; // registry unreachable on purpose
 const { resolveRole } = await import("../lib/roles.ts");
 
 // Simulate the callback's decision table exactly as implemented.
-function callbackDecision(role: { isAdmin: boolean }) {
-  if (!role.isAdmin) return { action: "redirect", to: "/", session: "keep" };
+function callbackDecision(role: { isAdmin: boolean }, next?: string | null) {
+  if (!role.isAdmin) {
+    const memberDestination = next?.startsWith("/reset-password") ? next : "/";
+    return { action: "redirect", to: memberDestination, session: "keep" };
+  }
   return { action: "redirect", to: "/workspace", session: "keep" };
 }
 
@@ -36,6 +39,16 @@ assert.equal(
   "keep",
   "member session must survive a registry outage (no signOut)",
 );
+
+// 1b. A member arriving from the password-recovery link must reach the
+//     new-password form (not bounce to the homepage mid-recovery).
+const recoveryDecision = callbackDecision(ctx, "/reset-password");
+assert.equal(
+  recoveryDecision.to,
+  "/reset-password",
+  "members finishing password recovery must land on /reset-password",
+);
+assert.equal(recoveryDecision.session, "keep");
 
 // 2. Elevated roles route to the workspace.
 const elevated = callbackDecision({ isAdmin: true });

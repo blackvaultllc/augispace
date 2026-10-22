@@ -8,8 +8,20 @@ import { Database, ExternalLink } from "lucide-react";
 
 const MIGRATIONS = [
   {
+    file: "20261019100000_app_tables.sql",
+    what: "Investigations, IP dossiers, assistant messages (RLS-scoped)",
+  },
+  {
     file: "20261022100000_roles_billing_integrations.sql",
     what: "Roles, staff invites, profiles, encrypted integration settings",
+  },
+  {
+    file: "20261022140000_processed_webhook_events.sql",
+    what: "Stripe webhook idempotency log (replay-safe billing)",
+  },
+  {
+    file: "20261022160000_awards.sql",
+    what: "Awards & achievements + private award-files bucket",
   },
   {
     file: "20261023100000_food_trucks.sql",
@@ -18,6 +30,14 @@ const MIGRATIONS = [
   {
     file: "20261024100000_site_media.sql",
     what: "Media uploads: site-media storage bucket + placement slots",
+  },
+  {
+    file: "20261025100000_food_truck_security.sql",
+    what: "Food truck hardening: self-verification block, license privacy",
+  },
+  {
+    file: "20261026120000_security_hardening.sql",
+    what: "app_users privacy policies, comment constraints, moderation",
   },
 ];
 

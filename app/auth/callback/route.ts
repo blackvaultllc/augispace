@@ -36,8 +36,11 @@ export async function GET(request: Request) {
     // Members keep their session for member features (food-truck comments,
     // community pages) but are routed to the public site instead of the
     // owner/staff workspace. Workspace pages re-verify server-side, so this
-    // redirect is convenience, not the authorization boundary.
-    return NextResponse.redirect(new URL('/', url.origin))
+    // redirect is convenience, not the authorization boundary. The password
+    // recovery destination (/reset/…) is preserved so recovery links land on
+    // the new-password form.
+    const memberDestination = next?.startsWith('/reset-password') ? next : '/'
+    return NextResponse.redirect(new URL(memberDestination, url.origin))
   }
 
   const destination = next?.startsWith('/workspace') || next?.startsWith('/admin') ? next : '/workspace'
