@@ -4,10 +4,29 @@ import { updateSession } from '@/lib/supabase/proxy'
 
 const STAFF_ERROR = 'staff_only'
 
+/**
+ * Region gate: public AUGI services are intended for United States visitors.
+ * Deployed on Cloudflare every request carries CF-IPCountry. Signed-in owner
+ * sessions bypass the gate (the owner may use AUGI from anywhere — verified
+ * server-side by role, not by geography). Outside Cloudflare (local dev) no
+ * header is present and access is open.
+ */
+const BLOCKED_NOTICE = '/unavailable-region'
+const PUBLIC_PATHS_BLOCKED = /^\/(?:demo|food-trucks|plans|careers|learn|approach|compliance)(?:\/|$)/
+
 export async function middleware(request: NextRequest) {
+  const country = request.headers.get('cf-ipcountry')
   const { response, user } = await updateSession(request)
   const path = request.nextUrl.pathname
-  const isAdminArea = path.startsWith('/workspace') || path.startsWith('/admin')
+
+  if (country && country !== 'US' && PUBLIC_PATHS_BLOCKED.test(path)) {
+    const isOwner = user && isOwnerEmail(user.email ?? '')
+    if (!isOwner) {
+      return NextResponse.rewrite(new URL(BLOCKED_NOTICE, request.url))
+    }
+  }
+
+  const isAdminArea = path.startsWith('/workspace') || path.startsWith('/admin') || path.startsWith('/budget')
   if (!isAdminArea) return response
 
   if (!user) {

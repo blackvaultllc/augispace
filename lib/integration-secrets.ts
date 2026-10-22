@@ -104,6 +104,7 @@ export async function getIntegrationStatus(
 
 export const INTEGRATION_KEYS = {
   abuseipdb: "abuseipdb_api_key",
+  aiGateway: "ai_gateway_api_key",
 } as const;
 
 export type IntegrationKey =

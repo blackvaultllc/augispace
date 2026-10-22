@@ -1,6 +1,7 @@
 import { generateText } from 'ai'
 import { domainToASCII } from 'node:url'
 import { NextResponse } from 'next/server'
+import { AI_MODELS, ensureAiCredentials } from '@/lib/ai'
 import { getUtcMonthStart, isOwnerEmail } from '@/lib/plans'
 import { createClient } from '@/lib/supabase/server'
 
@@ -163,9 +164,11 @@ export async function POST(request: Request) {
 
   let aiExplanation: string | null = null
   if (userId) {
+    const credentialsReady = await ensureAiCredentials()
     try {
+      if (!credentialsReady) throw new Error('AI credentials are not configured.')
       const result = await generateText({
-        model: 'google/gemini-3.8-flash',
+        model: AI_MODELS.domainAnalyst,
         system: 'You are AUGI, a defensive email-domain security analyst. Explain only the public DNS evidence supplied. Never infer a person’s identity, intent, reputation, or compromise. Do not make unsupported claims. Give one short paragraph explaining the signals and two concise, prioritized actions for the domain owner. State uncertainty clearly and remain neutral.',
         prompt: JSON.stringify({ domain, score, summary, checks, evidence }),
         maxOutputTokens: 420,

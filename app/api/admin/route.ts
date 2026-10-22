@@ -60,7 +60,10 @@ export async function GET() {
     }>(
       `select id, email, role, status, created_at from staff_invites order by created_at desc limit 50`,
     ),
-    Promise.all([getIntegrationStatus("abuseipdb_api_key")]),
+    Promise.all([
+      getIntegrationStatus("abuseipdb_api_key"),
+      getIntegrationStatus("ai_gateway_api_key"),
+    ]),
   ]);
 
   return NextResponse.json(
@@ -72,6 +75,11 @@ export async function GET() {
           key: "abuseipdb_api_key",
           label: "AbuseIPDB API key",
           ...statuses[0],
+        },
+        {
+          key: "ai_gateway_api_key",
+          label: "AI Gateway key (powers copilot, analyst & reports)",
+          ...statuses[1],
         },
       ],
     },

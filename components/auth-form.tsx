@@ -56,6 +56,8 @@ export function AuthForm({ mode, notice, nextPath = '/workspace' }: { mode: 'sig
         setError('Too many attempts. Wait a moment, then try again.')
       } else if (result.error.code === 'weak_password') {
         setError('Choose a stronger password with at least 8 characters.')
+      } else if (result.error.code === 'provider_enabled_disabled' || result.error.message?.includes('provider')) {
+        setError('Google sign-in is not switched on yet. The owner enables it in Supabase → Authentication → Providers.')
       } else {
         setError('We could not complete that request. Check your details and try again.')
       }
@@ -78,11 +80,11 @@ export function AuthForm({ mode, notice, nextPath = '/workspace' }: { mode: 'sig
         <p className="auth-description">{isSignUp ? 'Register the configured owner email to save domain investigations and return to the private security workspace.' : 'Sign in with the configured owner account to return to saved investigations and the private security workspace.'}</p>
         {notice && <p className="auth-description" role="status">{notice}</p>}
 
-        {!isSignUp && (
+        {(
           <>
             <button className="auth-google-button" type="button" onClick={handleGoogleSignIn} disabled={busy}>
               <span className="auth-google-mark" aria-hidden="true">G</span>
-              {busy ? 'CONNECTING TO GOOGLE' : 'CONTINUE WITH GOOGLE'}
+              {busy ? 'CONNECTING TO GOOGLE' : 'CONTINUE WITH GOOGLE — 1 CLICK'}
               <ArrowRight aria-hidden="true" />
             </button>
             <div className="auth-divider" aria-hidden="true"><span />OR USE EMAIL<span /></div>

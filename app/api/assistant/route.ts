@@ -1,5 +1,6 @@
 import { generateText } from 'ai'
 import { NextResponse } from 'next/server'
+import { AI_MODELS, ensureAiCredentials } from '@/lib/ai'
 import { getOwnerContext } from '@/lib/supabase/owner'
 
 export const runtime = 'nodejs'
@@ -61,9 +62,13 @@ export async function POST(request: Request) {
 
   if (userMessageError) return NextResponse.json({ error: 'Your question could not be saved.' }, { status: 500 })
 
+  const credentialsReady = await ensureAiCredentials()
   try {
+    if (!credentialsReady) {
+      return NextResponse.json({ error: 'The AI copilot needs its API key. The owner can add it in the admin Integrations panel.', retained: true }, { status: 503 })
+    }
     const result = await generateText({
-      model: 'openai/o4-mini-fast',
+      model: AI_MODELS.copilot,
       system: `${SYSTEM_PROMPT}\n\nLOCAL RETAINED KNOWLEDGE (use before online lookup):\n${OFFLINE_KNOWLEDGE}\n\nACTIVE WORKFLOW: ${mode}. Treat this as a reporting mode only. Do not execute commands or claim a scan happened unless evidence was supplied.`,
       messages: [
         ...(recent ?? []).reverse().map((item) => ({ role: item.role as 'user' | 'assistant', content: item.content })),

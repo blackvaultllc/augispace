@@ -1,5 +1,6 @@
 import { generateText } from 'ai'
 import { NextResponse } from 'next/server'
+import { AI_MODELS, ensureAiCredentials } from '@/lib/ai'
 import { getOwnerContext } from '@/lib/supabase/owner'
 
 export const runtime = 'nodejs'
@@ -22,9 +23,13 @@ export async function POST(request: Request) {
     if (response?.ok) barcodeResult = await response.json().catch(() => null)
   }
 
+  const credentialsReady = await ensureAiCredentials()
   try {
+    if (!credentialsReady) {
+      return NextResponse.json({ error: 'Image analysis needs the AI key. The owner can add it in the admin Integrations panel.' }, { status: 503 })
+    }
     const result = await generateText({
-      model: 'google/gemini-3.8-flash',
+      model: AI_MODELS.imageAnalyst,
       system: SYSTEM_PROMPT,
       messages: [{
         role: 'user',
