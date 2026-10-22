@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import { latLngBounds } from "leaflet";
 import type { Truck } from "@/lib/food-truck-types";
 import { DEMO_TRUCKS, isDemoTruck } from "@/lib/food-truck-demo";
 import { TruckPins } from "@/components/truck-radar-layer";
@@ -28,6 +29,28 @@ function FlyTo({ latitude, longitude }: { latitude: number; longitude: number })
   useEffect(() => {
     map.flyTo([latitude, longitude], 16, { duration: 1.1 });
   }, [latitude, longitude, map]);
+  return null;
+}
+
+/** Contiguous United States. The map cannot leave these bounds. */
+const US_BOUNDS = latLngBounds([23.5, -126], [50, -65]);
+
+/** Sets the minimum zoom so the view never shows more than the US. */
+function UsLock() {
+  const map = useMap();
+  useEffect(() => {
+    const apply = () => {
+      map.invalidateSize();
+      const minZoom = map.getBoundsZoom(US_BOUNDS, true);
+      map.setMinZoom(minZoom);
+      if (map.getZoom() < minZoom) map.setZoom(minZoom);
+    };
+    apply();
+    map.on("resize", apply);
+    return () => {
+      map.off("resize", apply);
+    };
+  }, [map]);
   return null;
 }
 
@@ -137,15 +160,18 @@ export function FoodTruckTracker({ signedIn, isOperator }: Props) {
           <div className="truck-map-shell">
             <MapContainer
               center={[30.6954, -88.0399]}
-              zoom={13}
+              zoom={6}
+              maxBounds={US_BOUNDS}
+              maxBoundsViscosity={1}
               scrollWheelZoom
               className="truck-map"
               aria-label="Food truck map with street-level detail"
             >
-              <TileLayer
+              <TileLayer noWrap
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
+              <UsLock />
               <TruckPins trucks={trucks.filter((truck) => truck.location)} selectedId={selectedId} onSelect={setSelectedId} />
               {selected?.location?.active && (
                 <FlyTo
