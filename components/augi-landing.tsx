@@ -98,6 +98,8 @@ export function SiteHeader() {
       <nav className={menuOpen ? 'site-nav site-nav-open' : 'site-nav'} aria-label="Main navigation">
         <Link href="/approach" onClick={() => setMenuOpen(false)}>Our approach</Link>
         <Link href="/demo" onClick={() => setMenuOpen(false)}>Live demo</Link>
+        <Link href="/food-trucks" onClick={() => setMenuOpen(false)}>Food trucks</Link>
+        <Link href="/compliance" onClick={() => setMenuOpen(false)}>Compliance</Link>
         <Link href="/plans" onClick={() => setMenuOpen(false)}>Plans</Link>
         <Link className="nav-signin" href="/sign-in" onClick={() => setMenuOpen(false)}>Log in</Link>
         <Link className="nav-login" href="/sign-up" onClick={() => setMenuOpen(false)}>Create account <ArrowUpRight aria-hidden="true" /></Link>
@@ -160,15 +162,50 @@ export function Approach() {
   )
 }
 
+const bandTabs = [
+  {
+    id: 'copilot',
+    label: 'AI COPILOT',
+    title: 'Evidence-led explanations, on demand',
+    body: 'AUGI\'s analysis engine reads only the public evidence in your report — DNS answers, registry fields, feed timestamps — and explains what they mean in plain language, with prioritized next steps. It is constrained to the evidence: it cannot speculate about people, invent threats, or fill gaps with guesses.',
+    points: ['Reads raw evidence, never assumptions', 'Two prioritized actions per report', 'States uncertainty explicitly'],
+  },
+  {
+    id: 'feeds',
+    label: 'LIVE FEEDS',
+    title: 'Verified government and community sources',
+    body: 'The radar plots CISA\'s Known Exploited Vulnerabilities catalog and AbuseIPDB\'s community abuse reports — each contact carries its named source, timestamp, and a link so you can verify it yourself. When a feed is down, the dashboard says so instead of filling the gap.',
+    points: ['CISA KEV · keyless, authoritative', 'AbuseIPDB reputation on every dossier', 'Reproducible: every number is checkable'],
+  },
+  {
+    id: 'programs',
+    label: 'MEMBER PROGRAMS',
+    title: 'Security is one pillar. Financial resilience is the other.',
+    body: 'Members get the budgeting program: calibrate every paycheck, cover rent, utilities, and water with intention, and fund future you before fun you. Your numbers stay in your browser — the plan saves to your own device.',
+    points: ['Interactive paycheck calibration', 'Emergency-fund path: $500 → 1 month → 3', 'Private: nothing sent to servers'],
+  },
+] as const
+
 export function IntelligenceBand() {
+  const [activeTab, setActiveTab] = useState<string>(bandTabs[0].id)
+  const active = bandTabs.find((tab) => tab.id === activeTab) ?? bandTabs[0]
   return (
     <section className="intelligence-band" aria-labelledby="band-title">
       <div className="band-glow" aria-hidden="true" />
       <div className="band-copy">
         <div className="section-label"><span>MEET YOUR SECURITY COPILOT</span><span className="section-label-line" /><span>AUGI / 01</span></div>
         <h2 id="band-title">Artificial intelligence.<br /><span>Human judgment.</span></h2>
-        <p>Built to make technical security signals easier to understand, not to make decisions on your behalf. Every useful answer should connect back to evidence and a clear next step.</p>
-        <Link className="text-link" href="/demo">See the signal demo <ArrowRight aria-hidden="true" /></Link>
+        <div className="band-tabs" role="tablist" aria-label="What AUGI does">
+          {bandTabs.map((tab) => (
+            <button key={tab.id} type="button" role="tab" aria-selected={activeTab === tab.id} className={activeTab === tab.id ? 'is-active' : ''} onClick={() => setActiveTab(tab.id)}>{tab.label}</button>
+          ))}
+        </div>
+        <div className="band-tab-panel" role="tabpanel">
+          <h3>{active.title}</h3>
+          <p>{active.body}</p>
+          <ul>{active.points.map((point) => <li key={point}>{point}</li>)}</ul>
+        </div>
+        <Link className="text-link" href="/demo">See the live demo <ArrowRight aria-hidden="true" /></Link>
       </div>
       <div className="band-graphic" aria-hidden="true">
         <div className="band-ring band-ring-one" />
@@ -178,6 +215,55 @@ export function IntelligenceBand() {
         <div className="band-orbit-label band-label-one">EVIDENCE</div>
         <div className="band-orbit-label band-label-two">CONTEXT</div>
         <div className="band-orbit-label band-label-three">ACTION</div>
+      </div>
+    </section>
+  )
+}
+
+export function MemberPrograms() {
+  const programs = [
+    {
+      tag: 'LIVE NOW · INCLUDED WITH ANALYST & COMMAND',
+      title: 'Budgeting program',
+      body: 'Calibrate every paycheck, cover rent, electricity, and water with intention, and build the emergency-fund path from $500 to three months of expenses. Interactive planner with paycheck split, category bars, and six written lessons. Private by design — your numbers never leave your browser.',
+      href: '/demo#budget-demo-title',
+      cta: 'Try the public demo',
+    },
+    {
+      tag: 'LIVE NOW · OWNER & STAFF',
+      title: 'Verified threat radar',
+      body: 'GPS local grid and a global plot of verified contacts from CISA\'s exploited-vulnerability catalog and AbuseIPDB community reports. IP dossiers carry network owner, reverse DNS, and abuse reputation with every lookup.',
+      href: '/demo',
+      cta: 'Open the live map',
+    },
+    {
+      tag: 'ROLLOUT · COMMUNITY PROGRAM',
+      title: 'Food truck tracker',
+      body: 'Licensed food truck operators register, verify their business license, and publish their live location, menu photos, and profile. The public finds trucks nearby; the community leaves comments and reactions. Free to list, built to bring customers to small businesses.',
+      href: '/food-trucks',
+      cta: 'Explore the tracker',
+    },
+    {
+      tag: 'PLANNED · REGULATORY WATCH',
+      title: 'Law & compliance radar',
+      body: 'A live watch on federal and state regulatory feeds — breach-notification laws, privacy statutes, and disclosure deadlines — summarized into plain-language briefings with your obligations and dates. The system surfaces proposed changes to the owner for review before anything ships.',
+      href: '/compliance',
+      cta: 'See the watchlist',
+    },
+  ]
+  return (
+    <section className="programs-section section-wrap" id="programs" aria-labelledby="programs-title">
+      <div className="section-label"><span>MEMBER PROGRAMS</span><span className="section-label-line" /><span>SECURITY + LIFE RESILIENCE</span></div>
+      <h2 id="programs-title">Beyond the radar.<br /><span>Built for your whole operation.</span></h2>
+      <div className="programs-grid">
+        {programs.map((program) => (
+          <article className="program-card" key={program.title}>
+            <span className="program-tag">{program.tag}</span>
+            <h3>{program.title}</h3>
+            <p>{program.body}</p>
+            <Link className="program-cta" href={program.href}>{program.cta} <ArrowRight aria-hidden="true" /></Link>
+          </article>
+        ))}
       </div>
     </section>
   )
@@ -242,7 +328,7 @@ export function SiteFooter() {
   return (
     <footer className="site-footer section-wrap">
       <div className="footer-main"><BrandMark /><p>Intelligence in service of people.<br />Built by Serpent Intelligence Systems.</p></div>
-      <div className="footer-links"><Link href="/approach">Our approach</Link><Link href="/demo">Try the demo</Link><Link href="/plans">Plans</Link><Link href="/careers">Careers</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/acceptable-use">Acceptable use</Link></div>
+      <div className="footer-links"><Link href="/approach">Our approach</Link><Link href="/demo">Try the demo</Link><Link href="/food-trucks">Food truck tracker</Link><Link href="/compliance">Compliance</Link><Link href="/plans">Plans</Link><Link href="/careers">Careers</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/acceptable-use">Acceptable use</Link></div>
       <div className="footer-bottom"><span>© 2026 SERPENT INTELLIGENCE SYSTEMS</span><span><span className="pulse-dot" /> PUBLIC SIGNALS · DEFENSIVE USE</span><Link href="/">BACK TO HOME <ArrowUpRight aria-hidden="true" /></Link></div>
     </footer>
   )
@@ -276,6 +362,7 @@ export function AugiLanding() {
             <div className="signal-definitions"><div className="definition-head"><BookOpen aria-hidden="true" /><span>FIELD DEFINITIONS</span></div><dl><div><dt>Posture index</dt><dd>A teaching summary of how consistently a domain publishes protective signals.</dd></div><div><dt>Evidence</dt><dd>The public record behind a result: DNS answers, timestamps, and source context.</dd></div><div><dt>Exposure</dt><dd>A condition that may increase risk. It is not proof that an account or person is compromised.</dd></div><div><dt>Trend</dt><dd>Movement across checks. Trends need context and should not be read like financial advice.</dd></div></dl></div>
           </div>
         </section>
+        <MemberPrograms />
         <SiteFooter />
       </div>
     </main>

@@ -64,8 +64,8 @@ a { color: inherit; }
 .site-frame { position: relative; width: min(100% - 88px, 1320px); margin-inline: auto; }
 .site-header { position: relative; z-index: 10; display: flex; min-height: 82px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
 .augi-brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
-.augi-brand-mark { position: relative; display: grid; width: 31px; height: 31px; place-items: center; border: 1px solid rgba(140, 232, 220, .52); border-radius: 50%; box-shadow: 0 0 22px rgba(140, 232, 220, .1), inset 0 0 16px rgba(140, 232, 220, .08); }
-.augi-brand-mark::before, .augi-brand-mark::after { position: absolute; content: ''; border: 1px solid rgba(140, 232, 220, .38); border-radius: 50%; }
+.augi-brand-mark { position: relative; display: grid; width: 31px; height: 31px; place-items: center; border: 0; border-radius: 50%; box-shadow: none; background: transparent; filter: drop-shadow(0 0 6px rgba(53,224,196,.35)); }
+.augi-brand-mark::before, .augi-brand-mark::after { content: none; }
 .augi-brand-mark::before { inset: 5px; }
 .augi-brand-mark::after { width: 5px; height: 5px; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }
 .augi-brand-mark span { position: absolute; width: 1px; height: 39px; background: linear-gradient(transparent, rgba(140, 232, 220, .66), transparent); transform: rotate(45deg); }
@@ -1517,3 +1517,112 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 .budget-lessons strong { color: #d9f5ef; }
 .budget-disclaimer { margin: 16px 0 0; color: #4f8a80; font-size: 9.5px; line-height: 1.6; }
 @media (max-width: 800px) { .budget-highlights, .budget-summary { grid-template-columns: 1fr; } .budget-list-head { display: none; } .budget-row { grid-template-columns: 1fr 1fr; } }
+
+/* ===== Band tabs (AI / Feeds / Programs) ===== */
+.band-tabs { display: flex; gap: 8px; margin: 18px 0 12px; flex-wrap: wrap; }
+.band-tabs button { padding: 8px 14px; border: 1px solid rgba(53,224,196,.3); background: none; color: #7fa39b; font: 9px var(--mono, monospace); letter-spacing: .12em; cursor: pointer; }
+.band-tabs button.is-active { background: #35e0c4; color: #04211b; border-color: #35e0c4; }
+.band-tab-panel { padding: 16px 18px; border: 1px solid rgba(53,224,196,.25); background: rgba(4,10,14,.8); margin-bottom: 14px; }
+.band-tab-panel h3 { margin: 0 0 8px; color: #eafff9; font-size: 15px; font-weight: 500; }
+.band-tab-panel p { margin: 0 0 10px; color: #a8c3bc; font-size: 11px; line-height: 1.7; }
+.band-tab-panel ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 5px; }
+.band-tab-panel li { color: #35e0c4; font-size: 10px; }
+.band-tab-panel li::before { content: '▸ '; }
+
+/* ===== Member programs section ===== */
+.programs-section { padding: 60px 0; border-top: 1px solid rgba(53,224,196,.15); }
+.programs-section h2 { margin: 12px 0 26px; color: #eafff9; font-size: clamp(24px, 4vw, 34px); font-weight: 500; letter-spacing: -.03em; }
+.programs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.program-card { padding: 20px; border: 1px solid rgba(53,224,196,.22); background: linear-gradient(150deg, rgba(8,18,24,.9), rgba(4,9,13,.92)); display: flex; flex-direction: column; gap: 10px; }
+.program-tag { color: #4f8a80; font: 8px var(--mono, monospace); letter-spacing: .14em; }
+.program-card h3 { margin: 0; color: #eafff9; font-size: 17px; font-weight: 500; letter-spacing: -.02em; }
+.program-card p { margin: 0; color: #a8c3bc; font-size: 11px; line-height: 1.7; flex: 1; }
+.program-cta { display: inline-flex; align-items: center; gap: 6px; color: #35e0c4; font-size: 11px; text-decoration: none; }
+.program-cta svg { width: 13px; height: 13px; }
+
+/* ===== Public budget demo section ===== */
+.demo-budget-section { margin-top: 40px; }
+.demo-budget-head { margin-bottom: 18px; }
+.demo-budget-head .section-label { display: block; margin-bottom: 10px; }
+.demo-budget-head h2 { margin: 0 0 10px; color: #eafff9; font-size: 26px; font-weight: 500; letter-spacing: -.02em; }
+.demo-budget-head h2 span { color: #35e0c4; }
+.demo-budget-head p { max-width: 640px; color: #a8c3bc; font-size: 12px; line-height: 1.7; }
+.demo-budget-head a { color: #35e0c4; }
+.budget-actions button.is-locked { background: none; color: #7fa39b; border-color: rgba(53,224,196,.3); cursor: pointer; }
+
+/* ===== Food truck tracker ===== */
+.truck-rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding-bottom: 34px; }
+.truck-rules article { padding: 16px; border: 1px solid rgba(53,224,196,.22); background: rgba(6,14,18,.8); }
+.truck-rules svg { width: 18px; height: 18px; color: #35e0c4; }
+.truck-rules strong { display: block; margin: 8px 0 6px; color: #eafff9; font-size: 12.5px; }
+.truck-rules p { margin: 0; color: #7fa39b; font-size: 10.5px; line-height: 1.65; }
+.truck-tracker { padding: 18px; border: 1px solid rgba(53,224,196,.3); background: linear-gradient(160deg, rgba(7,16,22,.95), rgba(4,9,13,.96)); }
+.truck-tracker-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px solid rgba(53,224,196,.2); }
+.truck-live { display: inline-flex; align-items: center; gap: 8px; color: #35e0c4; font-size: 11px; letter-spacing: .1em; font-weight: 600; }
+.truck-live svg { width: 14px; height: 14px; }
+.truck-refresh-note { color: #4f8a80; font-size: 9px; }
+.truck-error, .truck-loading { color: #ff7a6b; font-size: 11px; }
+.truck-layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; }
+.truck-map { position: relative; min-height: 320px; border: 1px solid rgba(53,224,196,.25); background: radial-gradient(ellipse at 50% 50%, rgba(53,224,196,.05), transparent 70%), #04090d; overflow: hidden; }
+.truck-map-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(53,224,196,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(53,224,196,.06) 1px, transparent 1px); background-size: 40px 40px; }
+.truck-pin { position: absolute; transform: translate(-50%, -100%); display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid #35e0c4; border-radius: 50% 50% 50% 4px; background: rgba(4,20,17,.9); color: #35e0c4; cursor: pointer; animation: truck-bounce 2.4s ease-in-out infinite; }
+.truck-pin svg { width: 15px; height: 15px; }
+.truck-pin.is-selected { background: #35e0c4; color: #04211b; }
+@keyframes truck-bounce { 0%,100% { translate: 0 0; } 50% { translate: 0 -4px; } }
+@media (prefers-reduced-motion: reduce) { .truck-pin { animation: none; } }
+.truck-map-empty { position: absolute; inset: auto 16px 16px; color: #4f8a80; font-size: 10px; }
+.truck-list { display: grid; gap: 8px; align-content: start; max-height: 380px; overflow-y: auto; }
+.truck-card { text-align: left; padding: 12px 14px; border: 1px solid rgba(53,224,196,.18); background: rgba(6,14,18,.85); cursor: pointer; }
+.truck-card.is-selected { border-color: #35e0c4; }
+.truck-card-head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.truck-card-head strong { color: #eafff9; font-size: 12.5px; }
+.truck-verified { display: inline-flex; align-items: center; gap: 4px; color: #ffd166; font: 7.5px var(--mono, monospace); letter-spacing: .1em; white-space: nowrap; }
+.truck-verified svg { width: 10px; height: 10px; }
+.truck-cuisine, .truck-where { display: flex; align-items: center; gap: 5px; margin-top: 5px; color: #7fa39b; font-size: 10px; }
+.truck-cuisine svg, .truck-where svg { width: 11px; height: 11px; color: #35e0c4; }
+.truck-empty { color: #4f8a80; font-size: 10.5px; }
+.truck-empty a { color: #35e0c4; }
+.truck-profile { margin-top: 16px; padding: 18px; border: 1px solid rgba(53,224,196,.25); background: rgba(4,10,14,.85); }
+.truck-profile-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+.truck-profile-head h3 { margin: 0; color: #eafff9; font-size: 18px; font-weight: 500; }
+.truck-profile-head span { color: #4f8a80; font-size: 10px; }
+.truck-profile-where { display: inline-flex; align-items: center; gap: 6px; color: #35e0c4 !important; }
+.truck-profile-where svg { width: 12px; height: 12px; }
+.truck-photos { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.truck-photos img { width: 220px; height: 140px; object-fit: cover; border: 1px solid rgba(53,224,196,.3); }
+.truck-no-photos { color: #4f8a80; font-size: 10px; }
+.truck-description { color: #a8c3bc; font-size: 11px; line-height: 1.7; margin: 0 0 12px; }
+.truck-comments h4 { display: flex; align-items: center; gap: 7px; margin: 0 0 10px; color: #d9f5ef; font-size: 12px; }
+.truck-comments h4 svg { width: 13px; height: 13px; color: #35e0c4; }
+.truck-comment { display: flex; gap: 8px; align-items: baseline; padding: 7px 10px; border-bottom: 1px dashed rgba(53,224,196,.15); }
+.truck-comment-emoji { font-size: 15px; }
+.truck-comment p { margin: 0; color: #a8c3bc; font-size: 10.5px; flex: 1; }
+.truck-comment time { color: #4f8a80; font-size: 8px; white-space: nowrap; }
+.truck-comment-form { display: flex; gap: 8px; margin-top: 12px; }
+.truck-comment-form input { flex: 1; min-height: 34px; padding: 0 10px; border: 1px solid rgba(53,224,196,.25); background: rgba(3,7,10,.9); color: #d9f5ef; font-size: 11px; }
+.truck-comment-form button { min-height: 34px; padding: 0 16px; border: 1px solid #35e0c4; background: #35e0c4; color: #04211b; font-size: 10px; cursor: pointer; }
+.truck-comment-signin { color: #4f8a80; font-size: 10px; }
+.truck-comment-signin a { color: #35e0c4; }
+.truck-comment-error { display: flex; align-items: center; gap: 6px; color: #ff7a6b; font-size: 10px; }
+.truck-operator-note { margin-top: 12px; color: #ffd166; font-size: 10px; }
+.truck-register-cta { padding-bottom: 60px; }
+.truck-register-cta h2 { margin: 0 0 8px; color: #eafff9; font-size: 22px; font-weight: 500; }
+.truck-register-cta p { max-width: 620px; color: #a8c3bc; font-size: 11.5px; line-height: 1.7; }
+.truck-register-cta .button-primary { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; padding: 12px 20px; background: #35e0c4; color: #04211b; text-decoration: none; font-size: 12px; font-weight: 700; }
+
+/* ===== Compliance page ===== */
+.compliance-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.compliance-section article { padding: 18px; border: 1px solid rgba(53,224,196,.22); background: rgba(6,14,18,.8); }
+.compliance-section svg { width: 18px; height: 18px; color: #35e0c4; }
+.compliance-section strong { display: block; margin: 8px 0 6px; color: #eafff9; font-size: 12.5px; }
+.compliance-section p { margin: 0; color: #7fa39b; font-size: 10.5px; line-height: 1.65; }
+.compliance-watch h2 { display: flex; align-items: center; gap: 9px; margin: 40px 0 8px; color: #eafff9; font-size: 20px; font-weight: 500; }
+.compliance-watch h2 svg { width: 18px; height: 18px; color: #35e0c4; }
+.compliance-watch > p { margin: 0 0 16px; color: #4f8a80; font-size: 10.5px; }
+.compliance-watch ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.compliance-watch li { padding: 14px 16px; border: 1px solid rgba(53,224,196,.18); background: rgba(4,10,14,.8); }
+.compliance-watch a { color: #35e0c4; font-size: 12px; text-decoration: none; border-bottom: 1px solid rgba(53,224,196,.35); }
+.compliance-watch li p { margin: 8px 0 0; color: #7fa39b; font-size: 10.5px; line-height: 1.65; }
+.compliance-note { padding-bottom: 60px; }
+.compliance-note p { max-width: 700px; color: #4f8a80; font-size: 10px; line-height: 1.7; border-left: 2px solid rgba(53,224,196,.3); padding-left: 14px; }
+@media (max-width: 900px) { .truck-rules, .truck-layout { grid-template-columns: 1fr; } .budget-summary { grid-template-columns: 1fr; } }

@@ -67,7 +67,9 @@ function makeId() {
   return `exp-${seq}`;
 }
 
-export function BudgetPlanner() {
+type Props = { canSave: boolean; signedInLabel?: string }
+
+export function BudgetPlanner({ canSave = false, signedInLabel = 'Create an account to save your plan' }: Props) {
   const [income, setIncome] = useState("");
   const [expenses, setExpenses] = useState<Expense[]>(() =>
     PRESETS.map((preset) => ({ ...preset, id: makeId() })),
@@ -116,6 +118,10 @@ export function BudgetPlanner() {
   }
 
   function saveLocally() {
+    if (!canSave) {
+      setSavedNote(signedInLabel);
+      return;
+    }
     try {
       window.localStorage.setItem(
         "augi:budget-plan",
@@ -273,8 +279,14 @@ export function BudgetPlanner() {
       </div>
 
       <div className="budget-actions">
-        <button type="button" onClick={saveLocally}>
-          Save plan on this device
+        <button
+          type="button"
+          onClick={saveLocally}
+          className={canSave ? "" : "is-locked"}
+        >
+          {canSave
+            ? "Save plan on this device"
+            : "🔒 Save your plan — account required"}
         </button>
         <button type="button" onClick={allocatePaycheck}>
           <Banknote aria-hidden="true" /> Split leftover per paycheck

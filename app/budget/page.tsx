@@ -44,7 +44,7 @@ export default async function BudgetPage() {
           ))}
         </div>
 
-        <BudgetPlanner />
+        <BudgetPlanner canSave />
       </div>
       <SiteFooter />
     </main>
