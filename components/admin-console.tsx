@@ -404,6 +404,7 @@ export function AdminConsole({ email, role }: Props) {
         time they sign up with their invited email address.
       </p>
       <a className="admin-budget-link" href="/budget">Open the budgeting program (owner/staff) ↗</a>
+      <a className="admin-budget-link" href="/office">Open the President's Office — documentation & assurance ↗</a>
     </section>
   );
 }
