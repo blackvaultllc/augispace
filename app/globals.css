@@ -1956,3 +1956,61 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   width: 14px; height: 14px; margin: -7px 0 0 -7px; z-index: 2;
   box-shadow: 0 0 0 3px rgba(255, 75, 85, .25), 0 0 16px #ff4b55;
 }
+
+/* ===== Truck radar v3: locked rings + radar styling ===== */
+.truck-map-shell .truck-radar-overlay { container-type: size; opacity: .85; }
+
+/* Rings: same proven centering as the sweep (no top/left/translate) */
+.truck-map-shell .truck-radar-ring {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  translate: none;
+  transform: none;
+  border: 1px solid rgba(255, 90, 100, .38);
+  border-radius: 50%;
+  box-shadow: 0 0 14px rgba(255, 60, 70, .14), inset 0 0 18px rgba(255, 60, 70, .07);
+}
+.truck-map-shell .truck-radar-ring-1 { width: 28cqmin; height: 28cqmin; }
+.truck-map-shell .truck-radar-ring-2 { width: 56cqmin; height: 56cqmin; }
+.truck-map-shell .truck-radar-ring-3 {
+  width: 88cqmin; height: 88cqmin;
+  border-color: rgba(255, 110, 118, .6);
+}
+/* Tick marks around the outer ring */
+.truck-map-shell .truck-radar-ring-3::before {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: repeating-conic-gradient(from -.5deg, rgba(255, 130, 138, .85) 0 1deg, transparent 1deg 10deg);
+  -webkit-mask: radial-gradient(circle, transparent calc(50% - 8px), #000 calc(50% - 7px));
+          mask: radial-gradient(circle, transparent calc(50% - 8px), #000 calc(50% - 7px));
+}
+
+/* Crosshair lines fade out toward the edges */
+.truck-map-shell .truck-radar-axis-h { background: linear-gradient(90deg, transparent, rgba(255, 90, 100, .35) 18% 82%, transparent); }
+.truck-map-shell .truck-radar-axis-v { background: linear-gradient(180deg, transparent, rgba(255, 90, 100, .35) 18% 82%, transparent); }
+
+/* Compass labels */
+.truck-radar-axis::before, .truck-radar-axis::after {
+  position: absolute; color: rgba(255, 150, 156, .85);
+  font: 600 9px/1 var(--mono, monospace); letter-spacing: .12em;
+}
+.truck-radar-axis-v::before { content: "N"; top: 8px; left: 50%; transform: translateX(-50%); }
+.truck-radar-axis-v::after  { content: "S"; bottom: 8px; left: 50%; transform: translateX(-50%); }
+.truck-radar-axis-h::before { content: "W"; left: 8px; top: 50%; transform: translateY(-50%); }
+.truck-radar-axis-h::after  { content: "E"; right: 8px; top: 50%; transform: translateY(-50%); }
+
+/* Sonar pulse from the center dot */
+.truck-map-shell .truck-radar-overlay::before {
+  content: ""; position: absolute; inset: 0; margin: auto;
+  width: 88cqmin; height: 88cqmin; border-radius: 50%;
+  border: 1px solid rgba(255, 90, 100, .55);
+  transform: scale(.05); opacity: 0;
+  animation: truck-sonar 4.2s ease-out infinite;
+}
+@keyframes truck-sonar {
+  0%   { transform: scale(.05); opacity: .8; }
+  100% { transform: scale(1);   opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .truck-map-shell .truck-radar-overlay::before { animation: none; opacity: 0; }
+}
