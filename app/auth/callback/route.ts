@@ -39,7 +39,7 @@ export async function GET(request: Request) {
     // redirect is convenience, not the authorization boundary. The password
     // recovery destination (/reset/…) is preserved so recovery links land on
     // the new-password form.
-    const memberDestination = next?.startsWith('/reset-password') ? next : '/'
+    const memberDestination = next?.startsWith('/reset-password') ? next : '/workspace/dashboard'
     return NextResponse.redirect(new URL(memberDestination, url.origin))
   }
 
