@@ -1,66 +1,38 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type FormEvent,
-} from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
 import {
+  CircleAlert,
   MapPin,
   MessageSquare,
   Navigation,
   Radio,
   Star,
-  Truck,
+  Truck as TruckIcon,
   UtensilsCrossed,
-  LoaderCircle,
-  CircleAlert,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import type { Truck } from "@/lib/food-truck-types";
+import { DEMO_TRUCKS, isDemoTruck } from "@/lib/food-truck-demo";
 
-type TruckComment = {
-  id: string;
-  body: string;
-  emoji: string | null;
-  createdAt: string;
-};
-type TruckLocation = {
-  latitude: number;
-  longitude: number;
-  placeNote: string | null;
-  active: boolean;
-  updatedAt: string;
-};
-type Truck = {
-  id: string;
-  businessName: string;
-  cuisine: string | null;
-  description: string | null;
-  truckPhotoUrl: string | null;
-  menuPhotoUrl: string | null;
-  verified: boolean;
-  location: TruckLocation | null;
-  comments: TruckComment[];
-};
+type TruckComment = Truck["comments"][number];
 
-const MAP_W = 800;
-const MAP_H = 420;
-const project = (lat: number, lon: number): [number, number] => [
-  ((lon + 180) / 360) * MAP_W,
-  ((90 - lat) / 180) * MAP_H,
-];
+type Props = { signedIn: boolean; isOperator: boolean };
 
-export function FoodTruckTracker({
-  signedIn,
-  isOperator,
-}: {
-  signedIn: boolean;
-  isOperator: boolean;
-}) {
+/** Recenters the map when a truck is selected from the list. */
+function FlyTo({ latitude, longitude }: { latitude: number; longitude: number }) {
+  const map = useMap();
+  useEffect(() => {
+    map.flyTo([latitude, longitude], 16, { duration: 1.1 });
+  }, [latitude, longitude, map]);
+  return null;
+}
+
+export function FoodTruckTracker({ signedIn, isOperator }: Props) {
   const [trucks, setTrucks] = useState<Truck[]>([]);
+  const [liveUnavailable, setLiveUnavailable] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -70,18 +42,27 @@ export function FoodTruckTracker({
   const load = useCallback(async () => {
     try {
       const response = await fetch("/api/food-trucks", { cache: "no-store" });
-      const payload = (await response.json()) as {
-        trucks?: Truck[];
-        error?: string;
-      };
+      const payload = (await response.json()) as { trucks?: Truck[]; error?: string };
       if (!response.ok || payload.error) {
-        setError(payload.error || "The tracker is temporarily unavailable.");
+        // API or database not ready yet — fall back to the demo fleet so the
+        // public always sees how the tracker works.
+        setTrucks(DEMO_TRUCKS);
+        setLiveUnavailable(true);
+        setLoading(false);
         return;
       }
-      setTrucks(payload.trucks ?? []);
+      const fetched = payload.trucks ?? [];
+      if (!fetched.length) {
+        setTrucks(DEMO_TRUCKS);
+        setLiveUnavailable(true);
+      } else {
+        setTrucks(fetched);
+        setLiveUnavailable(false);
+      }
       setError("");
     } catch {
-      setError("The tracker is temporarily unavailable.");
+      setTrucks(DEMO_TRUCKS);
+      setLiveUnavailable(true);
     } finally {
       setLoading(false);
     }
@@ -98,19 +79,20 @@ export function FoodTruckTracker({
     [trucks],
   );
   const selected = trucks.find((truck) => truck.id === selectedId) ?? null;
+  const demoMode = liveUnavailable || (trucks.length > 0 && trucks.every(isDemoTruck));
 
   async function postComment(event: FormEvent) {
     event.preventDefault();
     if (!selected || !commentDraft.trim()) return;
+    if (isDemoTruck(selected)) {
+      setCommentError("This is a demo listing — comments open on real trucks. Create an account to be first in line!");
+      return;
+    }
     setCommentError("");
     const response = await fetch("/api/food-trucks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "comment",
-        truckId: selected.id,
-        body: commentDraft,
-      }),
+      body: JSON.stringify({ action: "comment", truckId: selected.id, body: commentDraft }),
     });
     if (!response.ok) {
       const payload = (await response.json()) as { error?: string };
@@ -122,17 +104,24 @@ export function FoodTruckTracker({
   }
 
   return (
-    <div className="truck-tracker">
+    <div className="truck-tracker" aria-live="polite">
       <div className="truck-tracker-head">
         <span className="truck-live">
-          <Radio aria-hidden="true" /> {active.length} TRUCK
-          {active.length === 1 ? "" : "S"} LIVE NOW
+          <Radio aria-hidden="true" /> {active.length} TRUCK{active.length === 1 ? "" : "S"} ON THE MAP
         </span>
         <span className="truck-refresh-note">
-          Locations refresh every minute
+          Zoom in for street-level detail · refreshes every minute
         </span>
       </div>
-      {error && (
+
+      {demoMode && (
+        <p className="truck-demo-banner" role="status">
+          <Star aria-hidden="true" /> DEMO PREVIEW — sample trucks so you can see
+          how the tracker works. Operators: register your truck to appear live
+          here for free.
+        </p>
+      )}
+      {error && !demoMode && (
         <p className="truck-error" role="alert">
           {error}
         </p>
@@ -141,39 +130,49 @@ export function FoodTruckTracker({
 
       {!loading && (
         <div className="truck-layout">
-          <div
-            className="truck-map"
-            role="img"
-            aria-label={`Map showing ${active.length} food trucks`}
-          >
-            <div className="truck-map-grid" aria-hidden="true" />
-            {active.map((truck) => {
-              const [x, y] = project(
-                truck.location!.latitude,
-                truck.location!.longitude,
-              );
-              return (
-                <button
-                  type="button"
-                  key={truck.id}
-                  className={`truck-pin${selectedId === truck.id ? " is-selected" : ""}`}
-                  style={{
-                    left: `${(x / MAP_W) * 100}%`,
-                    top: `${(y / MAP_H) * 100}%`,
-                  }}
-                  onClick={() => setSelectedId(truck.id)}
-                  aria-label={`${truck.businessName} at ${truck.location!.placeNote ?? "map location"}`}
-                >
-                  <Truck aria-hidden="true" />
-                </button>
-              );
-            })}
-            {!active.length && (
-              <p className="truck-map-empty">
-                No trucks are live right now. Operators check in when they open
-                for service.
-              </p>
-            )}
+          <div className="truck-map-shell">
+            <MapContainer
+              center={[38.9, -77.036]}
+              zoom={13}
+              scrollWheelZoom
+              className="truck-map"
+              aria-label="Food truck map with street-level detail"
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              {active.map((truck) =>
+                truck.location ? (
+                  <CircleMarker
+                    key={truck.id}
+                    center={[truck.location.latitude, truck.location.longitude]}
+                    radius={selectedId === truck.id ? 12 : 8}
+                    pathOptions={{
+                      color: selectedId === truck.id ? "#ffd166" : "#35e0c4",
+                      fillColor: selectedId === truck.id ? "#ffd166" : "#35e0c4",
+                      fillOpacity: 0.85,
+                      weight: 2,
+                    }}
+                    eventHandlers={{ click: () => setSelectedId(truck.id) }}
+                  >
+                    <Popup>
+                      <strong>{truck.businessName}</strong>
+                      <br />
+                      {truck.location.placeNote ?? truck.cuisine ?? "Food truck"}
+                      <br />
+                      {truck.verified ? "✅ License verified" : "License verification pending"}
+                    </Popup>
+                  </CircleMarker>
+                ) : null,
+              )}
+              {selected?.location?.active && (
+                <FlyTo
+                  latitude={selected.location.latitude}
+                  longitude={selected.location.longitude}
+                />
+              )}
+            </MapContainer>
           </div>
 
           <aside className="truck-list" aria-label="Food trucks">
@@ -188,7 +187,7 @@ export function FoodTruckTracker({
                   <strong>{truck.businessName}</strong>
                   {truck.verified && (
                     <span className="truck-verified">
-                      <Star aria-hidden="true" /> LICENSE VERIFIED
+                      <Star aria-hidden="true" /> VERIFIED
                     </span>
                   )}
                 </div>
@@ -205,12 +204,6 @@ export function FoodTruckTracker({
                 )}
               </button>
             ))}
-            {!trucks.length && (
-              <p className="truck-empty">
-                No trucks registered yet. Operators can{" "}
-                <Link href="/sign-up">create an account</Link> and register.
-              </p>
-            )}
           </aside>
         </div>
       )}
@@ -222,7 +215,12 @@ export function FoodTruckTracker({
         >
           <header className="truck-profile-head">
             <div>
-              <h3>{selected.businessName}</h3>
+              <h3>
+                {selected.businessName}
+                {isDemoTruck(selected) && (
+                  <em className="truck-demo-tag">DEMO</em>
+                )}
+              </h3>
               <span>
                 {selected.cuisine ?? "Food truck"} ·{" "}
                 {selected.verified
@@ -233,32 +231,36 @@ export function FoodTruckTracker({
             {selected.location?.active && (
               <span className="truck-profile-where">
                 <Navigation aria-hidden="true" />{" "}
-                {selected.location.placeNote ?? "Live now"} · updated{" "}
-                {new Date(selected.location.updatedAt).toLocaleTimeString()}
+                {selected.location.placeNote ?? "Live now"}
               </span>
             )}
           </header>
           <div className="truck-photos">
-            {selected.truckPhotoUrl && (
+            {selected.truckPhotoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={selected.truckPhotoUrl}
                 alt={`Truck photo for ${selected.businessName}`}
                 width={280}
                 height={180}
               />
+            ) : (
+              <div className="truck-photo-slot" aria-hidden="true">
+                <TruckIcon /> Truck photo placeholder
+              </div>
             )}
-            {selected.menuPhotoUrl && (
+            {selected.menuPhotoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={selected.menuPhotoUrl}
                 alt={`Menu photo for ${selected.businessName}`}
                 width={280}
                 height={180}
               />
-            )}
-            {!selected.truckPhotoUrl && !selected.menuPhotoUrl && (
-              <p className="truck-no-photos">
-                The operator has not added photos yet.
-              </p>
+            ) : (
+              <div className="truck-photo-slot" aria-hidden="true">
+                🍽️ Menu photo placeholder
+              </div>
             )}
           </div>
           {selected.description && (
@@ -270,7 +272,7 @@ export function FoodTruckTracker({
               <MessageSquare aria-hidden="true" /> Community (
               {selected.comments.length})
             </h4>
-            {selected.comments.map((comment) => (
+            {selected.comments.map((comment: TruckComment) => (
               <div className="truck-comment" key={comment.id}>
                 {comment.emoji && (
                   <span className="truck-comment-emoji">{comment.emoji}</span>
@@ -279,7 +281,7 @@ export function FoodTruckTracker({
                 <time>{new Date(comment.createdAt).toLocaleDateString()}</time>
               </div>
             ))}
-            {signedIn ? (
+            {signedIn && !isDemoTruck(selected) ? (
               <form className="truck-comment-form" onSubmit={postComment}>
                 <input
                   value={commentDraft}
@@ -292,8 +294,12 @@ export function FoodTruckTracker({
               </form>
             ) : (
               <p className="truck-comment-signin">
-                <Link href="/sign-in">Sign in</Link> to leave comments and
-                reactions.
+                {isDemoTruck(selected)
+                  ? "Demo listing — real trucks open for comments once registered."
+                  : (
+                      <Link href="/sign-in">Sign in</Link>
+                    )}{" "}
+                {!(isDemoTruck(selected)) && "to leave comments and reactions."}
               </p>
             )}
             {commentError && (
@@ -307,8 +313,8 @@ export function FoodTruckTracker({
 
       {isOperator && (
         <p className="truck-operator-note">
-          You have an operator account — manage your truck listing and live
-          location from your workspace.
+          You are signed in — register your truck from your workspace to appear
+          on the public map.
         </p>
       )}
     </div>

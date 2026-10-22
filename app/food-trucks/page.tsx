@@ -45,6 +45,36 @@ export default async function FoodTrucksPage() {
       description="A live tracker for licensed food trucks. Operators publish their location and profile; the community finds them and cheers them on. Free for operators, free to browse."
     >
       <section
+        className="truck-hero"
+        aria-label="Food truck tracker in action"
+      >
+        {/* Drop a vibrant clip at public/videos/food-truck.mp4 and it plays here automatically. */}
+        <video
+          className="truck-hero-media"
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/augi-public-signal.png"
+          aria-hidden="true"
+        >
+          <source src="/videos/food-truck.mp4" type="video/mp4" />
+        </video>
+        <div className="truck-hero-overlay" aria-hidden="true" />
+        <div className="truck-hero-copy">
+          <span className="section-label">EAT LOCAL · TRACK LIVE</span>
+          <h2>
+            The street-food
+            <br />
+            <span>radar.</span>
+          </h2>
+          <p>
+            Real trucks. Real locations, updated by the operators themselves.
+            Zoom to street level and go find lunch.
+          </p>
+        </div>
+      </section>
+      <section
         className="truck-rules section-wrap"
         aria-label="How the tracker works"
       >

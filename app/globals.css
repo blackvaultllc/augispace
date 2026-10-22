@@ -1636,3 +1636,27 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 .region-panel h1 { margin: 0; color: #eafff9; font-size: 22px; font-weight: 500; }
 .region-panel p { margin: 0; color: #a8c3bc; font-size: 12.5px; line-height: 1.7; }
 .region-back { color: #35e0c4; font-size: 12px; text-decoration: none; border-bottom: 1px solid rgba(53, 224, 196, 0.4); }
+
+/* ===== Street-level food truck map (Leaflet) ===== */
+.truck-map-shell { min-height: 420px; border: 1px solid rgba(53,224,196,.3); }
+.truck-map { width: 100%; height: 460px; background: #04090d; filter: saturate(1.12) contrast(1.05); }
+.leaflet-container { font-family: var(--mono, monospace); }
+.leaflet-popup-content-wrapper { background: rgba(6,14,18,.96); color: #d9f5ef; border: 1px solid rgba(53,224,196,.4); }
+.leaflet-popup-tip { background: rgba(6,14,18,.96); }
+.leaflet-control-attribution { background: rgba(4,9,13,.8) !important; color: #4f8a80 !important; }
+.leaflet-control-attribution a { color: #35e0c4 !important; }
+.truck-demo-banner { display: flex; align-items: center; gap: 9px; margin: 0 0 12px; padding: 10px 14px; border: 1px solid rgba(255,209,102,.45); background: linear-gradient(90deg, rgba(255,209,102,.14), rgba(255,177,77,.06)); color: #ffd166; font-size: 11px; line-height: 1.5; }
+.truck-demo-banner svg { width: 14px; height: 14px; flex-shrink: 0; }
+.truck-demo-tag { margin-left: 8px; padding: 2px 7px; border-radius: 3px; background: #ffd166; color: #2b1c05; font: 8px var(--mono, monospace); font-style: normal; letter-spacing: .12em; vertical-align: middle; }
+.truck-photo-slot { display: grid; place-items: center; gap: 8px; width: 220px; height: 140px; border: 1px dashed rgba(53,224,196,.3); color: #4f8a80; font-size: 10px; text-align: center; padding: 8px; }
+.truck-photo-slot svg { width: 22px; height: 22px; }
+
+/* ===== Vibrant food truck hero (video or gradient fallback) ===== */
+.truck-hero { position: relative; min-height: 380px; display: grid; align-items: end; overflow: hidden; margin-top: 10px; border: 1px solid rgba(53,224,196,.3); }
+.truck-hero-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.truck-hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(4,9,13,.15) 0%, rgba(4,9,13,.78) 78%), linear-gradient(120deg, rgba(53,224,196,.25), rgba(255,177,77,.18) 55%, rgba(240,86,86,.22)); mix-blend-mode: normal; }
+.truck-hero-copy { position: relative; padding: 30px 28px; }
+.truck-hero-copy .section-label { color: #ffd166; }
+.truck-hero-copy h2 { margin: 10px 0 8px; color: #fff; font-size: clamp(28px, 5vw, 44px); font-weight: 700; letter-spacing: -.03em; line-height: 1.02; text-shadow: 0 2px 18px rgba(0,0,0,.5); }
+.truck-hero-copy h2 span { color: #35e0c4; }
+.truck-hero-copy p { max-width: 480px; color: #e8f4f0; font-size: 13px; line-height: 1.6; text-shadow: 0 1px 10px rgba(0,0,0,.6); }
