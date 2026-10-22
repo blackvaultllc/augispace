@@ -2,7 +2,8 @@ import { generateText } from 'ai'
 import { domainToASCII } from 'node:url'
 import { NextResponse } from 'next/server'
 import { AI_MODELS, ensureAiCredentials } from '@/lib/ai'
-import { getUtcMonthStart, isOwnerEmail } from '@/lib/plans'
+import { getUtcMonthStart, planTiers } from '@/lib/plans'
+import { resolveRole } from '@/lib/roles'
 import { createClient } from '@/lib/supabase/server'
 
 export const runtime = 'nodejs'
@@ -91,10 +92,29 @@ export async function POST(request: Request) {
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const isOwner = !!user && isOwnerEmail(user.email ?? '')
-  const userId = isOwner ? user.id : null
+  let userId: string | null = null
   let used = 0
-  const limit: number | null = null
+  let limit: number | null = null
+  let resolvedTier: keyof typeof planTiers | null = null
+
+  if (user) {
+    // Resolve the tier server-side (fail-closed to member) and derive the
+    // monthly investigation limit from the plan definition. Signed-in paid
+    // tiers keep their sessions and limits; the owner keeps unlimited use.
+    const role = await resolveRole(user.id, user.email)
+    if (role.role === 'owner') {
+      userId = user.id
+      limit = null // owner: unlimited
+      resolvedTier = 'observer' // owner tier label for response; limit stays null
+    } else {
+      // "member" and "staff" both get the free observer tier's limits;
+      // only paid plan tiers grant larger allowances (see lib/plans.ts).
+      const tierKey = (role.role === 'member' || role.role === 'staff' ? 'observer' : role.role) as keyof typeof planTiers
+      resolvedTier = tierKey
+      limit = planTiers[tierKey].monthlyChecks
+      if (limit > 0) userId = user.id
+    }
+  }
 
   if (userId) {
     const { count: usageCount, error: usageError } = await supabase
@@ -105,6 +125,14 @@ export async function POST(request: Request) {
 
     if (usageError) return jsonError('Saved investigation usage could not be loaded.', 500)
     used = usageCount ?? 0
+  }
+
+  if (limit !== null && used >= limit) {
+    return jsonError(
+      `You have used all ${limit} included investigations this month. Upgrade your plan or wait for the next cycle.`,
+      429,
+      { usage: { used, limit, remaining: 0 } },
+    )
   }
 
   const [mxResult, txtResult, dmarcResult] = await Promise.allSettled([
@@ -196,11 +224,13 @@ export async function POST(request: Request) {
     savedInvestigation = { id: saved.id, domain, score, createdAt: saved.created_at, report }
   }
 
+  const tierLabel = userId ? (limit === null ? 'owner' : resolvedTier) : 'public'
+
   return NextResponse.json({
     ...report,
     result: report,
     saved: !!userId,
-    tier: userId ? 'owner' : 'public',
+    tier: tierLabel,
     investigation: savedInvestigation,
     usage: userId ? { used, limit, remaining: limit === null ? null : Math.max(0, limit - used) } : null,
   }, { headers: { 'Cache-Control': 'private, no-store' } })
