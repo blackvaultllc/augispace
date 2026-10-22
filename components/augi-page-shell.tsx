@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { ArrowRight, ArrowUpRight, LockKeyhole } from 'lucide-react'
 import { SiteFooter, SiteHeader } from '@/components/augi-landing'
+import { ShareButton } from '@/components/share-button'
+import { InnerBanner } from '@/components/inner-banner'
 
 export function AugiPageShell({
   eyebrow,
@@ -21,14 +23,16 @@ export function AugiPageShell({
         <SiteHeader />
         <section className="inner-hero section-wrap" aria-labelledby="inner-title">
           <div className="inner-hero-copy">
-            <div className="section-label"><span>{eyebrow}</span><span className="section-label-line" /><span>PROTECTED BY SERPENT</span></div>
+            <div className="section-label"><span>{eyebrow}</span><span className="section-label-line" /></div>
             <h1 id="inner-title">{title}</h1>
             <p>{description}</p>
             <div className="inner-hero-proof"><LockKeyhole aria-hidden="true" /><span>Public signals only. Encrypted in transit. Built for defensive use.</span></div>
+            <div style={{ marginTop: 16 }}><ShareButton /></div>
           </div>
-          <div className="inner-hero-index" aria-hidden="true"><span>AUGI</span><strong>01</strong><span>SERPENT INTELLIGENCE SYSTEMS</span></div>
+          <div className="inner-hero-index" aria-hidden="true"><span>AUGI</span><strong>01</strong></div>
         </section>
         <div className="inner-divider" />
+        <InnerBanner />
         {children}
         <section className="inner-cta section-wrap" aria-label="Continue with AUGI">
           <div><span className="section-label">READY WHEN YOU ARE</span><h2>Explore a safer<br /><span>next signal.</span></h2></div>

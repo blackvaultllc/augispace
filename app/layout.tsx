@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   },
   description: 'Review public email-domain DNS signals, including MX, SPF, and DMARC configuration, with clear defensive context.',
   applicationName: 'AUGI',
+  metadataBase: new URL('https://augi.space'),
   keywords: [
     'email domain security',
     'email security posture',
@@ -16,16 +17,18 @@ export const metadata: Metadata = {
     'email authentication analysis',
     'domain security intelligence',
     'AUGI',
-    'Serpent Intelligence Systems',
   ],
   openGraph: {
     title: 'AUGI — Email Domain Intelligence',
     description: 'Understand public email-domain DNS signals with privacy-first, evidence-led guidance.',
     type: 'website',
     siteName: 'AUGI',
+    url: 'https://augi.space',
+    images: [{ url: '/og-share.jpg', width: 1200, height: 630, alt: 'AUGI' }],
   },
   twitter: {
     card: 'summary_large_image',
+    images: ['/og-share.jpg'],
     title: 'AUGI — Email Domain Intelligence',
     description: 'Understand public email-domain DNS signals with privacy-first, evidence-led guidance.',
   },

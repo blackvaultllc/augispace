@@ -12,10 +12,11 @@ import {
   Truck as TruckIcon,
   UtensilsCrossed,
 } from "lucide-react";
-import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { Truck } from "@/lib/food-truck-types";
 import { DEMO_TRUCKS, isDemoTruck } from "@/lib/food-truck-demo";
+import { TruckPins } from "@/components/truck-radar-layer";
 
 type TruckComment = Truck["comments"][number];
 
@@ -46,14 +47,14 @@ export function FoodTruckTracker({ signedIn, isOperator }: Props) {
       if (!response.ok || payload.error) {
         // API or database not ready yet — fall back to the demo fleet so the
         // public always sees how the tracker works.
-        setTrucks(DEMO_TRUCKS);
+        setTrucks([]);
         setLiveUnavailable(true);
         setLoading(false);
         return;
       }
       const fetched = payload.trucks ?? [];
       if (!fetched.length) {
-        setTrucks(DEMO_TRUCKS);
+        setTrucks([]);
         setLiveUnavailable(true);
       } else {
         setTrucks(fetched);
@@ -61,7 +62,7 @@ export function FoodTruckTracker({ signedIn, isOperator }: Props) {
       }
       setError("");
     } catch {
-      setTrucks(DEMO_TRUCKS);
+      setTrucks([]);
       setLiveUnavailable(true);
     } finally {
       setLoading(false);
@@ -143,30 +144,7 @@ export function FoodTruckTracker({ signedIn, isOperator }: Props) {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              {active.map((truck) =>
-                truck.location ? (
-                  <CircleMarker
-                    key={truck.id}
-                    center={[truck.location.latitude, truck.location.longitude]}
-                    radius={selectedId === truck.id ? 12 : 8}
-                    pathOptions={{
-                      color: selectedId === truck.id ? "#ff4545" : "#ff7777",
-                      fillColor: selectedId === truck.id ? "#ff4545" : "#ff7777",
-                      fillOpacity: 0.85,
-                      weight: 2,
-                    }}
-                    eventHandlers={{ click: () => setSelectedId(truck.id) }}
-                  >
-                    <Popup>
-                      <strong>{truck.businessName}</strong>
-                      <br />
-                      {truck.location.placeNote ?? truck.cuisine ?? "Food truck"}
-                      <br />
-                      {truck.verified ? "✅ License verified" : "License verification pending"}
-                    </Popup>
-                  </CircleMarker>
-                ) : null,
-              )}
+              <TruckPins trucks={trucks.filter((truck) => truck.location)} selectedId={selectedId} onSelect={setSelectedId} />
               {selected?.location?.active && (
                 <FlyTo
                   latitude={selected.location.latitude}
