@@ -25,7 +25,7 @@ function isPlacement(value: string): value is Placement {
 }
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8 MB
-const MAX_VIDEO_BYTES = 64 * 1024; // 64 MB
+const MAX_VIDEO_BYTES = 64 * 1024 * 1024; // 64 MB
 
 function isImage(file: File) {
   return file.type.startsWith("image/");

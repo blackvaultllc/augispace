@@ -36,3 +36,5 @@ tsconfig.tsbuildinfo
 .dev.vars.*
 
 augispace/
+
+*.bak
