@@ -1928,3 +1928,31 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 /* Bigger truck photo on PC */
 .truck-live-thumb { width: clamp(220px, 24vw, 380px); height: auto; aspect-ratio: 5 / 3; border-radius: 10px; overflow: hidden; }
 .truck-live-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ===== Truck radar v2: exact-center clock hand ===== */
+.truck-radar-overlay { container-type: size; }
+.truck-radar-ring {
+  inset: 0; margin: auto; top: auto; left: auto;
+  transform: none; translate: none; height: auto;
+}
+.truck-radar-ring-1 { width: 28cqmin; height: 28cqmin; }
+.truck-radar-ring-2 { width: 56cqmin; height: 56cqmin; }
+.truck-radar-ring-3 { width: 88cqmin; height: 88cqmin; }
+.truck-radar-sweep {
+  position: absolute; inset: 0; margin: auto; top: 0; left: 0;
+  width: 88cqmin; height: 88cqmin; aspect-ratio: auto;
+  transform: none; translate: none; transform-origin: 50% 50%;
+  mask-image: none; -webkit-mask-image: none;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 300deg,
+    rgba(255, 55, 65, .10) 335deg,
+    rgba(255, 55, 65, .38) 357deg,
+    rgba(255, 90, 100, .95) 360deg
+  );
+}
+.truck-radar-overlay::after {
+  width: 14px; height: 14px; margin: -7px 0 0 -7px; z-index: 2;
+  box-shadow: 0 0 0 3px rgba(255, 75, 85, .25), 0 0 16px #ff4b55;
+}
