@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { MediaUploader } from "@/components/admin-media";
+import { SupabaseInfo } from "@/components/admin-supabase-info";
 import {
   BookOpen,
   CheckCircle2,
@@ -374,6 +376,8 @@ export function AdminConsole({ email, role }: Props) {
         </section>
       </div>
 
+      <MediaUploader />
+      <SupabaseInfo />
       <div className="admin-definitions">
         <div className="definition-head">
           <BookOpen aria-hidden="true" />

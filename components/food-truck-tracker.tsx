@@ -109,6 +109,7 @@ export function FoodTruckTracker({ signedIn, isOperator }: Props) {
         <span className="truck-live">
           <Radio aria-hidden="true" /> {active.length} TRUCK{active.length === 1 ? "" : "S"} ON THE MAP
         </span>
+        <img className="truck-live-thumb" src="/augi-community-research.png" alt="" aria-hidden="true" />
         <span className="truck-refresh-note">
           Zoom in for street-level detail · refreshes every minute
         </span>

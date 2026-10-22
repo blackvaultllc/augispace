@@ -3,6 +3,7 @@ import { ShieldCheck, Truck, MapPin } from "lucide-react";
 import { FoodTruckTracker } from "@/components/food-truck-tracker";
 import { AugiPageShell } from "@/components/augi-page-shell";
 import { createClient } from "@/lib/supabase/server";
+import { getMediaAssets } from "@/lib/media";
 
 export const metadata: Metadata = {
   title: "Food Truck Tracker — find local trucks live",
@@ -31,6 +32,14 @@ export default async function FoodTrucksPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const media = await getMediaAssets(["truck_hero_video", "truck_hero_image"]);
+  const heroVideo = media.truck_hero_video?.url ?? "/videos/food-truck.mp4";
+  const heroPoster = media.truck_hero_image?.url ?? "/augi-public-signal.png";
+  const hasVideo = !!media.truck_hero_video;
+  const hasImage = !!media.truck_hero_image;
+  // Show the media block whenever the owner uploaded something; otherwise the
+  // section collapses so the page never shows an empty "broken" slot.
+  const showHero = hasVideo || hasImage;
 
   return (
     <AugiPageShell
@@ -44,36 +53,42 @@ export default async function FoodTrucksPage() {
       }
       description="A live tracker for licensed food trucks. Operators publish their location and profile; the community finds them and cheers them on. Free for operators, free to browse."
     >
-      <section
-        className="truck-hero"
-        aria-label="Food truck tracker in action"
-      >
-        {/* Drop a vibrant clip at public/videos/food-truck.mp4 and it plays here automatically. */}
-        <video
-          className="truck-hero-media"
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster="/augi-public-signal.png"
-          aria-hidden="true"
+      {showHero && (
+        <section
+          className="truck-hero"
+          aria-label="Food truck tracker in action"
         >
-          <source src="/videos/food-truck.mp4" type="video/mp4" />
-        </video>
-        <div className="truck-hero-overlay" aria-hidden="true" />
-        <div className="truck-hero-copy">
-          <span className="section-label">EAT LOCAL · TRACK LIVE</span>
-          <h2>
-            The street-food
-            <br />
-            <span>radar.</span>
-          </h2>
-          <p>
-            Real trucks. Real locations, updated by the operators themselves.
-            Zoom to street level and go find lunch.
-          </p>
-        </div>
-      </section>
+          {hasVideo ? (
+            <video
+              className="truck-hero-media"
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster={heroPoster}
+              aria-hidden="true"
+            >
+              <source src={heroVideo} type="video/mp4" />
+            </video>
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className="truck-hero-media" src={heroPoster} alt="" aria-hidden="true" />
+          )}
+          <div className="truck-hero-overlay" aria-hidden="true" />
+          <div className="truck-hero-copy">
+            <span className="section-label">EAT LOCAL · TRACK LIVE</span>
+            <h2>
+              The street-food
+              <br />
+              <span>radar.</span>
+            </h2>
+            <p>
+              Real trucks. Real locations, updated by the operators themselves.
+              Zoom to street level and go find lunch.
+            </p>
+          </div>
+        </section>
+      )}
       <section
         className="truck-rules section-wrap"
         aria-label="How the tracker works"

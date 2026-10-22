@@ -1660,3 +1660,38 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 .truck-hero-copy h2 { margin: 10px 0 8px; color: #fff; font-size: clamp(28px, 5vw, 44px); font-weight: 700; letter-spacing: -.03em; line-height: 1.02; text-shadow: 0 2px 18px rgba(0,0,0,.5); }
 .truck-hero-copy h2 span { color: #35e0c4; }
 .truck-hero-copy p { max-width: 480px; color: #e8f4f0; font-size: 13px; line-height: 1.6; text-shadow: 0 1px 10px rgba(0,0,0,.6); }
+
+/* ===== Picture-backed stat cards (replace plain number boxes) ===== */
+.ti-stat-card { position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(10,26,32,.92) 0%, rgba(6,14,18,.95) 55%), url(/augi-signal-core.png) center/cover no-repeat; border: 1px solid rgba(53,224,196,.28); }
+.ti-stat-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(4,10,13,.15) 0%, rgba(4,10,13,.88) 75%); pointer-events: none; }
+.ti-stat-card > * { position: relative; z-index: 1; }
+.ti-stat-card:nth-child(2) { background-image: url(/augi-evidence-desk.png); }
+.ti-stat-card:nth-child(3) { background-image: url(/augi-protection-network.png); }
+.ti-stat-card:nth-child(4) { background-image: url(/augi-community-research.png); }
+.ti-stat-card strong { font-size: 30px; text-shadow: 0 2px 12px rgba(0,0,0,.65); }
+.ti-stat-card small { text-shadow: 0 1px 8px rgba(0,0,0,.7); }
+
+/* ===== Workspace metric cards with imagery ===== */
+.workspace-metric { position: relative; overflow: hidden; }
+.workspace-metric::before { content: ''; position: absolute; inset: 0; background: url(/augi-signal-core.png) center/cover no-repeat; opacity: .13; pointer-events: none; }
+.workspace-metric::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(4,10,13,.35) 0%, rgba(4,10,13,.86) 80%); pointer-events: none; }
+.workspace-metric > * { position: relative; z-index: 1; }
+
+/* ===== Admin media panel ===== */
+.admin-media-panel { grid-column: 1 / -1; }
+.admin-media-slot { margin-bottom: 16px; padding: 14px; border: 1px solid rgba(53,224,196,.16); background: rgba(10,18,24,.6); }
+.admin-media-hint { display: block; margin: -6px 0 10px; color: #7a8f98; font-size: 9px; line-height: 1.5; }
+.admin-media-preview { display: block; width: min(320px, 100%); aspect-ratio: 16/9; object-fit: cover; margin: 10px 0; border: 1px solid rgba(53,224,196,.25); }
+.admin-media-link { color: #35e0c4; font-size: 10px; margin-left: 12px; }
+.admin-media-msg { display: flex; align-items: center; gap: 6px; margin: 8px 0 0; color: #35e0c4; font-size: 10px; }
+.admin-media-msg svg { width: 12px; height: 12px; }
+.truck-live-thumb { width: 72px; height: 44px; object-fit: cover; border: 1px solid rgba(53,224,196,.35); }
+.admin-supabase-panel { grid-column: 1 / -1; }
+.admin-supabase-row { display: flex; gap: 10px; align-items: baseline; padding: 5px 0; }
+.admin-supabase-row span { color: #7a8f98; font: 8px var(--mono, monospace); letter-spacing: .12em; width: 100px; flex-shrink: 0; }
+.admin-supabase-row strong { color: #d9f5ef; font-size: 11px; word-break: break-all; }
+.admin-migration-list { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.admin-migration-list li { display: flex; gap: 10px; padding: 9px 12px; border: 1px solid rgba(53,224,196,.15); background: rgba(10,18,24,.6); }
+.admin-migration-step { display: grid; place-items: center; width: 22px; height: 22px; flex-shrink: 0; border: 1px solid #35e0c4; color: #35e0c4; font-size: 10px; }
+.admin-migration-list code { color: #d9f5ef; font-size: 10px; display: block; }
+.admin-migration-list small { color: #7a8f98; font-size: 9px; }
