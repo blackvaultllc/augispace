@@ -1,6 +1,5 @@
 import { isIP } from 'node:net'
 import { NextResponse } from 'next/server'
-import { isOwnerEmail } from '@/lib/plans'
 import { getIntegrationSecret, INTEGRATION_KEYS } from '@/lib/integration-secrets'
 import { createClient } from '@/lib/supabase/server'
 import type { IpDossier, IpDossierReport } from '@/lib/ip-dossier'
@@ -155,7 +154,13 @@ function clean(value: unknown, max = 160) {
 async function requireOwner() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user || !isOwnerEmail(user.email ?? '')) return { supabase, user: null }
+  if (!user) return { supabase, user: null }
+  // Resolve from the server-side role registry (fails closed on DB outage).
+  // The configured owner email self-registers, so the registry stays the
+  // single source of truth for both owner and staff.
+  const { resolveRole } = await import('@/lib/roles')
+  const role = await resolveRole(user.id, user.email)
+  if (!role.isAdmin) return { supabase, user: null }
   return { supabase, user }
 }
 
